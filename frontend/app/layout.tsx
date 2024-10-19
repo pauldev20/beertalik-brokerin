@@ -6,6 +6,7 @@ import "./globals.css";
 import Providers from "@/lib/providers";
 
 import { siteConfig } from "@/lib/siteConfig";
+import InstallPrompt from "@/components/installPrompt";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
@@ -14,8 +15,7 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     appleWebApp: {
         capable: true,
-        statusBarStyle: "black-translucent",
-        startupImage: "/icon-512x512.png",
+        statusBarStyle: "black-translucent"
     }
 };
 export const viewport: Viewport = {
@@ -34,7 +34,9 @@ export default function RootLayout({
         <html lang="en" className="dark">
             <body className={clsx(notoSans.className, "antialiased")}>
                 <Providers>
-                    {children}
+                    <InstallPrompt>
+                        {children}
+                    </InstallPrompt>
                 </Providers>
             </body>
         </html>
