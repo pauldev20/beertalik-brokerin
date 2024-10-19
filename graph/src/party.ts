@@ -25,7 +25,7 @@ export function handlePurchase(event: PurchaseEvent): void {
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.from = event.params.from
-  entity.blockNumber = event.params.blockNumber
+  // entity.blockNumber = event.params.blockNumber
   entity.price = event.params.price
 
   entity.blockNumber = event.block.number

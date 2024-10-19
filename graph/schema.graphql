@@ -10,7 +10,6 @@ type OwnershipTransferred @entity(immutable: true) {
 type Purchase @entity(immutable: true) {
   id: Bytes!
   from: Bytes! # address
-  blockNumber: BigInt! # uint256
   price: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
