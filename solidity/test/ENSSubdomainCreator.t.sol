@@ -66,6 +66,7 @@ contract PartyTest is Test {
             2021232060 // The expiry for the subname
         );
         creator.registerSubname("subsub", address(0x1337));
+        assertEq("subsub.test1.beertalik.eth", creator.getName(address(0x1337)));
     }
 
 }

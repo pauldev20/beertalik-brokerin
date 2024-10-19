@@ -32,11 +32,18 @@ contract ENSSubdomainCreator is ERC1155Holder {
     INameWrapper public immutable wrapper;
     IResolver public immutable resolver;
     string public ensName;
+    // small hacks because of issue with reverse lookup :)
+    // would have to set it as primary but its hard since the NFCs have no gas
+    mapping(address => string) reverseMap;
 
     constructor(string memory _ensName) {
-        wrapper = INameWrapper(0x0635513f179D50A207757E05759CbD106d7dFcE8); //_wrapper;
-        resolver = IResolver(0x8FADE66B79cC9f707aB26799354482EB93a5B7dD); //_resolver;
+        wrapper = INameWrapper(0x0635513f179D50A207757E05759CbD106d7dFcE8);
+        resolver = IResolver(0x8FADE66B79cC9f707aB26799354482EB93a5B7dD);
         ensName = _ensName;
+    }
+
+    function getName(address a) external view returns (string memory) {
+        return string.concat(reverseMap[a], ".", ensName, ".beertalik.eth");
     }
 
     function computeNameHashParent() public view returns (bytes32 namehash) {
@@ -88,5 +95,6 @@ contract ENSSubdomainCreator is ERC1155Holder {
             0, // The fuse bits OR'd together, that you want to burn
             2021232060 // The expiry for the subname
         );
+        reverseMap[a] = label;
     }
 }
