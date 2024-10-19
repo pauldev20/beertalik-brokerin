@@ -8,20 +8,38 @@ import { gql, request } from 'graphql-request';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Chart } from "react-google-charts";
+// @ts-expect-error idk
+import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 
-interface CreateEventModalProps {
+interface ConnectWristbandModalProps {
 	isOpen: boolean;
 	onOpenChange: (isOpen: boolean) => void;
 }
-function SetUsernameModal({ isOpen, onOpenChange}: CreateEventModalProps) {
+function ConnectWristbandModal({ isOpen, onOpenChange}: ConnectWristbandModalProps) {
+	const [loading, setLoading] = useState(false);
+
+	async function btnClick() {
+		setLoading(true);
+		try {
+			console.log(await execHaloCmdWeb({
+			  name: "sign",
+			  keyNo: 1,
+			  message: "010203"
+			}));
+			setLoading(false);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} hideCloseButton isDismissable>
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange} hideCloseButton isDismissable={!loading}>
 			<ModalContent>
-				<ModalHeader>Set Username</ModalHeader>
+				<ModalHeader>Set Name & Wristband</ModalHeader>
 				<ModalBody>
-					<Input label="Username" />
-					<Button color="primary" className="w-full">
-						Submit
+					<Input type="text" label="Username" />
+					<Button color="primary" className="mb-5" isLoading={loading} onClick={btnClick}>
+						Connect Wristband
 					</Button>
 				</ModalBody>
 			</ModalContent>
@@ -39,11 +57,12 @@ export default function BeerPage() {
 	// 	chainId: sepolia.id
 	// });
 
-	function convertToChartData(data: any) {
-		// @ts-ignore
+	// @ts-expect-error idk
+	function convertToChartData(data) {
+		// @ts-expect-error idk
 		const formatPrice = price => parseFloat(price) / 1000000;
 		const result = [["Time", "", "", "", ""]];
-		// @ts-ignore
+		// @ts-expect-error idk
 		data.forEach((item, index) => {
 			const price = formatPrice(item.price);
 			const previousPrice = index > 0 ? formatPrice(data[index - 1].price) : price;
@@ -80,13 +99,13 @@ export default function BeerPage() {
 	});
 	useEffect(() => {
 		if (status === "success") {
-			// @ts-ignore
+			// @ts-expect-error idk
 			setChartData(convertToChartData(data["purchases"]));
 		}
 	}, [data, status]);
 
 	return (<>
-		<SetUsernameModal isOpen={isOpen} onOpenChange={onOpenChange} />
+		<ConnectWristbandModal isOpen={isOpen} onOpenChange={onOpenChange} />
 		<BasicPage
 			topLeftBtn={<ChevronLeftIcon />}
 			topLeftClick={() => router.replace("/event")}

@@ -26,14 +26,12 @@ function CreateEventModal({ isOpen, onOpenChange}: CreateEventModalProps) {
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={!loading} hideCloseButton>
 			<ModalContent>
-			{(onClose) => (<>
 				<ModalHeader className="flex flex-col gap-1">Create Event</ModalHeader>
 				<ModalBody>
 					<Input type="text" label="Event Name" />
 					<Input type="text" label="Event Location" />
 					<Button color="primary" onClick={createEvent} isLoading={loading}>Create Event</Button>
 				</ModalBody>
-			</>)}
 			</ModalContent>
 		</Modal>
 	)
@@ -81,7 +79,8 @@ export default function Main() {
 		setLoading(false);
 	}, []);
 
-	const handleSearch = (event: any) => {
+	// @ts-expect-error idk
+	const handleSearch = (event) => {
 		const searchTerm = event.target.value.toLowerCase();
 		const filteredResults = events.filter(event =>
 			event.name.toLowerCase().includes(searchTerm) || 
