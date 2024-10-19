@@ -18,7 +18,7 @@ export default function ConnectWalletButton() {
 	}, [isConnected, router]);
 
 	return (
-		<Button color="primary" size="lg" onClick={() => setShowAuthFlow(true)} isLoading={!sdkHasLoaded || (sdkHasLoaded && user != undefined)}>
+		<Button className="w-full" color="primary" size="lg" onClick={() => setShowAuthFlow(true)} isLoading={!sdkHasLoaded || (sdkHasLoaded && user != undefined)}>
 			Log In / Sign Up
 		</Button>
 	);
