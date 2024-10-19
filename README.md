@@ -1,6 +1,6 @@
-# Beertik Brokewar
+# Beertalik Brokerin
 
-Combination of memecoin trading and beer! The more users purchase beer, the higher the prices rise. Beer purchases are stored directly on your NFC-enabled wristband, making it quick and effortless to exchange digital tokens for actual beverages at events.
+Combination of memecoin trading and beer! Tool for event organisers to let customers trade beer. The more users purchase beer, the higher the prices rise. Beer purchases are stored on NFC-enabled wristband, making it easy to exchange digital tokens for actual beverages at events.
 
 ## Description
 
@@ -28,3 +28,6 @@ Every purchase of beer emits the following event:
 `event Purchase(address from, uint256 blockNumber, uint256 price);`
 
 These events are getting indexed by The Graph to display a price chart on the app.
+
+## Future Outlook
+

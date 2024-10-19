@@ -13,6 +13,14 @@ export
 
 none:
 
+ensSub-deploy:
+	forge script script/ENSSubdomainCreator.s.sol:Deploy --broadcast --fork-url $(RPC_SEPOLIA) --private-key $(PRIVATE_KEY) -vvvv --ffi
+ensSub-addEventDomain:
+	forge script script/ENSSubdomainCreator.s.sol:AddEventDomain --broadcast --fork-url $(RPC_SEPOLIA) --private-key $(PRIVATE_KEY) -vvvv --ffi
+ensSub-addEventSubDomain:
+	forge script script/ENSSubdomainCreator.s.sol:AddEventSubDomain --broadcast --fork-url $(RPC_SEPOLIA) --private-key $(PRIVATE_KEY) -vvvv --ffi
+
+
 partyList-deploy:
 	forge script script/PartyList.s.sol:Deploy --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
 partyList-verify:
@@ -46,10 +54,12 @@ party-buy-beer:
 party-get-price:
 	forge script script/Party.s.sol:GetPrice --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
 
-# test:
-# 	forge test --match-test "test_" --fork-url ${RPC} -vvvv
+test:
+	forge test --match-test "test_RegisterDomain" --fork-url ${RPC_SEPOLIA} -vvvv
 
 fork:
 	anvil -f wss://sepolia.drpc.org
 fork-deal:
 	curl http://localhost:8545 -X POST -H "Content-Type: application/json" --data '{"method":"anvil_setBalance","params":["$(ADDRESS)", "0x021e19e0c9bab2400000"],"id":1,"jsonrpc":"2.0"}'
+
+.PHONY: test
