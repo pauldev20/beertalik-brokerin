@@ -1,5 +1,5 @@
-import { polygonAmoy, flowTestnet, skaleNebula, morphHolesky, sepolia } from "wagmi/chains";
 import { http, createConfig } from "wagmi";
+import { sepolia } from "wagmi/chains";
 
 export const config = createConfig({
     chains: [sepolia],
