@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import DynamicHeroIcon, { IconName } from "./dynamicHeroIcon";
 
-interface BottomNavbarItemProps {
+export interface BottomNavbarItemProps {
 	icon: IconName;
 	label: string;
 	active?: boolean;
@@ -22,7 +22,7 @@ interface BottomNavbarProps {
 }
 export default function BottomNavbar({ items, className }: BottomNavbarProps) {
 	return (
-		<footer className={clsx("w-full z-20 bg-background bottom-0 left-0 right-0 p-3 flex justify-around shadow-top shadow-slate-300 dark:shadow-gray-300 rounded-t-lg", className)}>
+		<footer className={clsx("z-20 bg-background bottom-0 left-0 right-0 p-3 flex justify-around shadow-top shadow-slate-300 dark:shadow-gray-300 rounded-t-lg", className)}>
 			{items.map((item, index) => (
 				<BottomNavbarItem key={index} {...item}/>
 			))}

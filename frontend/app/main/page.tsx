@@ -4,10 +4,9 @@ import { ArrowLeftStartOnRectangleIcon, ChevronRightIcon, MagnifyingGlassIcon, P
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useRouter } from 'next/navigation';
 
-import IconButton from "@/components/iconButton";
-import BottomNavbar from "@/components/bottomNavbar";
 import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Spinner, useDisclosure } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import BasicPage from "@/components/basicPage";
 
 interface CreateEventModalProps {
 	isOpen: boolean;
@@ -72,6 +71,7 @@ export default function Main() {
 	}
 
 	useEffect(() => {
+		setLoading(true);
 		const res = [...Array(30)].map((_, index) => ({
 			name: `Event Name ${index}`,
 			location: "Event Location",
@@ -83,28 +83,30 @@ export default function Main() {
 
 	const handleSearch = (event: any) => {
 		const searchTerm = event.target.value.toLowerCase();
-		// Filter events based on the search term
 		const filteredResults = events.filter(event =>
 			event.name.toLowerCase().includes(searchTerm) || 
 			event.location.toLowerCase().includes(searchTerm)
 		);
-		setResults(filteredResults); // Update the results state
+		setResults(filteredResults);
 	};
 
-	return (<div className="h-[100svh] w-screen flex flex-col items-center">
+	return (<>
 		<CreateEventModal isOpen={isOpen} onOpenChange={onOpenChange} />
-		<header className="w-full top-0 left-0 right-0 p-4 flex justify-between">
-			<IconButton icon={<ArrowLeftStartOnRectangleIcon className="size-8"/>} onClick={logout} />
-			<IconButton icon={<PlusIcon className="size-8"/>} onClick={onOpen} />
-		</header>
-		<main className="w-full flex-grow p-5 flex flex-col gap-3 overflow-hidden">
-			<div className="flex items-end gap-3">
-				<span style={{fontSize: "60px", lineHeight: "60px"}}>🏠</span>
-				<h1 className="text-4xl font-bold text-center">Events</h1>
-			</div>
+		<BasicPage
+			emoji="🏠"
+			pageTitle="Events"
+			topLeftBtn={<ArrowLeftStartOnRectangleIcon/>}
+			topLeftClick={logout}
+			topRightBtn={<PlusIcon/>}
+			topRightClick={onOpen}
+			navbarItems={[
+				{ icon: "HomeIcon", label: "Home", active: true },
+				{ icon: "UserIcon", label: "Profile", onClick: () => router.replace("/profile") },
+			]}
+		>
 			<Input isClearable type="text" placeholder="Search" startContent={<MagnifyingGlassIcon className="size-4" />} onChange={handleSearch} />
 			{loading && <div className="flex flex-grow items-center justify-center gap-3">
-				<Spinner className="w-5"/>
+				<Spinner size="lg" />
 			</div>}
 			{!loading && <div className="flex flex-col gap-1.5 flex-grow overflow-y-auto scrollbar-hide">
 				{results.length > 0 ? (
@@ -119,10 +121,6 @@ export default function Main() {
 					<p className="w-full text-center">No events found</p>
 				)}
 			</div>}
-		</main>
-		<BottomNavbar items={[
-			{ icon: "HomeIcon", label: "Home", active: true },
-			{ icon: "UserIcon", label: "Profile", onClick: () => router.replace("/profile") },
-		]} className="w-full self-end"/>
-	</div>)
+		</BasicPage>
+	</>)
 }
