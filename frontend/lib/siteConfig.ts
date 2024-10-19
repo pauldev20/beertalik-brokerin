@@ -1,6 +1,6 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-    name: "Beertik Brokewar",
+    name: "Beertalik Brokerin",
     description: "ethglobal-sf",
 };
