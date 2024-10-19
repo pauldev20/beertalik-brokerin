@@ -30,14 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={clsx(notoSans.className, "antialiased")}
-      >
-        <Providers>
+    <html lang="en" className="dark">
+      <Providers>
+        <body
+          className={clsx(notoSans.className, "antialiased")}
+        >
           {children}
-        </Providers>
-      </body>
+        </body>
+      </Providers>
     </html>
   );
 }
