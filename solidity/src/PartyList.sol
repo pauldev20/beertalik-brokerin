@@ -5,14 +5,17 @@ import {Party} from "./Party.sol";
 
 contract PartyList {
     Party[] public parties;
+    address public usdc;
 
-    constructor() {}
+    constructor(address _usdc) {
+        usdc = _usdc;
+    }
 
     function createParty(string memory name) external {
         Party party = new Party(
             msg.sender,
             name,
-            address(1),
+            usdc,
             3e6, // min price
             5e5, // buy Increase
             10, // block Interval decrease

@@ -26,6 +26,8 @@ contract Party is Ownable {
 
     event Purchase(address from, uint256 blockNumber, uint256 price);
 
+    error NoNFT();
+
     /**
      * @param owner The address that will own the contract.
      * @param _name The name of the party.
@@ -46,6 +48,7 @@ contract Party is Ownable {
     ) Ownable(owner) {
         name = _name;
         usdc = IERC20(_usdc);
+        beer = new Beer("Beer", "Beer", address(this));
         minPrice = _minPrice;
         buyIncrease = _buyIncrease;
         blockIntervalDecrease = _blockIntervalDecrease;
@@ -68,15 +71,21 @@ contract Party is Ownable {
     function buy() external {
         uint256 price = getPrice();
         usdc.safeTransferFrom(msg.sender, address(this), price);
+        beer.mint(msg.sender, 1);
         emit Purchase(msg.sender, block.number, price);
         lastPurchasePrice = price;
         lastPurchaseBlockNumber = block.number;
     }
 
-    
+    function approveNFC(address nfcAddr) external {
+        nfc[nfcAddr] = msg.sender;
+    }
 
     function burnBeer(address nfcAddr, uint256 amount) external onlyOwner {
         address owner = nfc[nfcAddr];
+        if (owner == address(0)) {
+            revert NoNFT();
+        }
         beer.burn(owner, amount);
     }
 

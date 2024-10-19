@@ -61,4 +61,17 @@ contract PartyTest is Test {
         price = party.getPrice();
         assertEq(minPrice + 2 * buyIncrease - 2 * amountDecrease, price);
     }
+
+    function test_NFC() public {
+        party.buy();
+        party.buy();
+        assertEq(2, party.beer().balanceOf(address(this)));
+        
+        vm.expectRevert();
+        party.burnBeer(address(0x1337), 1);
+
+        party.approveNFC(address(0x1337));
+        party.burnBeer(address(0x1337), 2);
+        assertEq(0, party.beer().balanceOf(address(this)));
+    }
 }

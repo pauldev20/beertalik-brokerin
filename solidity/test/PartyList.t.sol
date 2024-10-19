@@ -3,12 +3,14 @@ pragma solidity ^0.8.13;
 
 import {Test, console} from "forge-std/Test.sol";
 import {PartyList} from "../src/PartyList.sol";
+import {USDC} from "../src/USDC.sol";
 
 contract PartyListTest is Test {
     PartyList list;
 
     function setUp() public {
-        list = new PartyList();
+        USDC usdc = new USDC(msg.sender);
+        list = new PartyList(address(usdc));
     }
 
     function test_CreateParty() public {
