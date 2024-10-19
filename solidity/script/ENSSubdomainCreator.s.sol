@@ -10,7 +10,7 @@ contract Deploy is Script {
         // vm.createSelectFork(vm.rpcUrl("sepolia"));
 
         vm.startBroadcast();
-        ENSSubdomainCreator creator = new ENSSubdomainCreator("test2");
+        ENSSubdomainCreator creator = new ENSSubdomainCreator("ethglobal-sf");
         vm.stopBroadcast();
     }
 }
@@ -24,7 +24,7 @@ contract AddEventDomain is Script {
     function setUp() public {
         wrapper = INameWrapper(0x0635513f179D50A207757E05759CbD106d7dFcE8); 
         resolver = IResolver(0x8FADE66B79cC9f707aB26799354482EB93a5B7dD);
-        creator = ENSSubdomainCreator(0x7364B8b12A5aff8e60e847f7C5765f97949e92aD);
+        creator = ENSSubdomainCreator(0x927fB1414F83905620F460B024bcFf2dD1dA430c);
     }
 
     function computeNameHashParent() public pure returns (bytes32 namehash) {
@@ -53,7 +53,7 @@ contract AddEventDomain is Script {
     }
 
     function run() public {
-        string memory label = "test2";
+        string memory label = "ethglobal-sf";
         address owner = msg.sender;
         vm.startBroadcast();
         wrapper.setSubnodeOwner(
@@ -83,12 +83,12 @@ contract AddEventSubDomain is Script {
     ENSSubdomainCreator public creator;
 
     function setUp() public {
-        creator = ENSSubdomainCreator(0x7364B8b12A5aff8e60e847f7C5765f97949e92aD);
+        creator = ENSSubdomainCreator(0x927fB1414F83905620F460B024bcFf2dD1dA430c);
     }
 
-    function run() public {
+    function run(string memory name, address addr) public {
         vm.broadcast();
-        creator.registerSubname("kekw", address(0x1337));
+        creator.registerSubname(name, address(addr));
     }
 
 }
