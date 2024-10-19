@@ -1,17 +1,20 @@
 import { http, createConfig } from "wagmi";
-import { mainnet } from "wagmi/chains";
+import { polygonAmoy, flowTestnet, skaleNebula, morphHolesky } from "wagmi/chains";
 
 export const config = createConfig({
-  chains: [mainnet],
-  multiInjectedProviderDiscovery: false,
-  ssr: true,
-  transports: {
-    [mainnet.id]: http(),
-  },
+    chains: [polygonAmoy, flowTestnet, skaleNebula, morphHolesky],
+    multiInjectedProviderDiscovery: false,
+    ssr: true,
+    transports: {
+        [polygonAmoy.id]: http(),
+        [flowTestnet.id]: http(),
+        [skaleNebula.id]: http("https://mainnet.skalenodes.com/v1/green-giddy-denebola"),
+        [morphHolesky.id]: http(),
+    },
 });
 
 declare module "wagmi" {
-  interface Register {
-    config: typeof config;
-  }
+    interface Register {
+        config: typeof config;
+    }
 }
