@@ -9,7 +9,7 @@ export default function useAddressName() {
 
 	const { data: nameData, refetch: refetchName } = useReadContract({
 		abi: ensAbi,
-		address: '0x927fB1414F83905620F460B024bcFf2dD1dA430c',
+		address: process.env.NEXT_PUBLIC_CUSTOM_ENS_CONTRACT_ADDRESS as `0x${string}`,
 		functionName: 'getName',
 		args: [primaryWallet?.address as `0x${string}`],
 		chainId: sepolia.id
