@@ -7,7 +7,7 @@ import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useReadContract } from "wagmi";
+import { useReadContracts } from "wagmi";
 import { useState } from "react";
 
 import BasicPage from "@/components/basicPage";
@@ -114,27 +114,34 @@ export default function EventPage() {
 	const router = useRouter();
 	useLogin();
 
-	const { data: owner } = useReadContract({
-		abi: partyAbi,
-		address: searchParams.get("addr") as `0x${string}`,
-		functionName: 'owner',
-		// @ts-expect-error idk
-		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
+	const { data } = useReadContracts({
+		contracts: [
+		  {
+			abi: partyAbi,
+			address: searchParams.get("addr") as `0x${string}`,
+			functionName: 'owner',
+			// @ts-expect-error idk
+			chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || ""),
+		  },
+		  {
+			abi: partyAbi,
+			address: searchParams.get("addr") as `0x${string}`,
+			functionName: 'beer',
+			// @ts-expect-error idk
+			chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || ""),
+		  },
+		  {
+			abi: partyAbi,
+			address: searchParams.get("addr") as `0x${string}`,
+			functionName: 'usdc',
+			// @ts-expect-error idk
+			chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || ""),
+		  },
+		]
 	});
-	const { data: beer } = useReadContract({
-		abi: partyAbi,
-		address: searchParams.get("addr") as `0x${string}`,
-		functionName: 'beer',
-		// @ts-expect-error idk
-		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
-	});
-	const { data: usdc } = useReadContract({
-		abi: partyAbi,
-		address: searchParams.get("addr") as `0x${string}`,
-		functionName: 'usdc',
-		// @ts-expect-error idk
-		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
-	});
+	const owner = data?.[0].result;
+	const beer = data?.[1].result;
+	const usdc = data?.[2].result;
 
 	return (<>
 		<BuyBeerModal isOpen={isOpen} onOpenChange={onOpenChange} partyAddr={searchParams.get("addr") || ""} />
