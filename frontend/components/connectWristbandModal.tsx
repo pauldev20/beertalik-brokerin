@@ -39,7 +39,13 @@ export default function ConnectWristbandModal({ isOpen, onOpenChange, refresh, p
 			console.log("Using API", apiEnd);
 			if (name === undefined) {
 				console.log("Registering (Sending Funds)");
-				await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(`${process.env.NEXT_PUBLIC_SERVER_URL}/fund-${apiEnd}?address=${primaryWallet?.address}`));
+				const resp = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(`${process.env.NEXT_PUBLIC_SERVER_URL}/fund-${apiEnd}?address=${primaryWallet?.address}`));
+				const jsonResp = await resp.json();
+				console.log(jsonResp["tx"]);
+				await waitForTransactionReceipt(config, {
+					hash: jsonResp["tx"],
+					confirmations: 1
+				});
 			}
 			const result = await execHaloCmdWeb({
 			  name: "get_pkeys"

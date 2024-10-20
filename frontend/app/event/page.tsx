@@ -28,6 +28,7 @@ interface BuyBeerModalProps {
 }
 function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
 	const [loadingWristband, setLoadingWristband] = useState(false);
+	const [userName, setUserName] = useState<undefined | string>(undefined);
 	const [user, setUser] = useState<undefined | string>(undefined);
 	const [loading, setLoading] = useState(false);
 	const [value, setValue] = useState(1);
@@ -39,7 +40,8 @@ function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
 				name: "get_pkeys"
 			});
 			const address = result["etherAddresses"]["1"];
-			setUser(await getENSAddessForNFC(address));
+			setUser(address);
+			setUserName(await getENSAddessForNFC(address));
 			setLoadingWristband(false);
 		} catch (e) {
 			console.log(e);
@@ -91,7 +93,7 @@ function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
 						/>
 					</div>
 					<Button color={user ? "success" : "secondary"} isLoading={loadingWristband} onClick={connWristband} isDisabled={user != undefined}>
-						{user ? user : "Scan Wristband"}
+						{(user || userName) ? (userName ? userName : user) : "Scan Wristband"}
 					</Button>
 					<Button color="primary" className="mb-5" isLoading={loading} onClick={checkout} isDisabled={user == undefined}>
 						Checkout
