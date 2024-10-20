@@ -17,9 +17,9 @@ contract Deploy is Script {
 
 contract CreateParty is Script {
     function run() public {
-        PartyList list = PartyList(0x34163568688fad1086b730FCa9e677aD4D585aa6);
+        PartyList list = PartyList(0xd32fC62C33C7E359D1E41f87d7C0f24c9f365D5e);
 
         vm.broadcast();
-        list.createParty("ETHGlobal SF");
+        list.createParty("ethglobal-sf.beertalik.eth");
     }
 }

@@ -1,10 +1,8 @@
-# RPC="https://eth-sepolia.api.onfinality.io/public" # sepolia
-RPC_SEPOLIA="https://sepolia.drpc.org" # sepolia
-RPC="127.0.0.1:8545"
-BASE_RPC="https://1rpc.io/base"
+RPC_SEPOLIA="https://sepolia.drpc.org"
 POLYGON_AMOY_RPC="https://rpc-amoy.polygon.technology/"
+MORPH_HOLESKY_RPC="https://rpc-quicknode-holesky.morphl2.io/"
 
-RPC=$(POLYGON_AMOY_RPC)
+RPC=$(MORPH_HOLESKY_RPC)
 
 include .env
 export
@@ -29,6 +27,10 @@ ensSub-addEventDomain:
 ensSub-addEventSubDomain:
 	forge script script/ENSSubdomainCreator.s.sol:AddEventSubDomain asd 0x9F79941335e54A11eCD13cedf58375657FdA97A1 --sig 'run(string,address)' --broadcast --fork-url $(RPC_SEPOLIA) --private-key $(PRIVATE_KEY) -vvvv --ffi
 
+
+
+partyList-deploy:
+	forge script script/PartyList.s.sol:Deploy --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
 CONSTRUCTOR_ARGS := $(shell cast abi-encode "constructor(address)" $(ADDRESS))
 usdc-verify:
 	forge verify-contract \
@@ -40,9 +42,6 @@ usdc-verify:
 	--guess-constructor-args \
 	--chain polygon-amoy \
 	--watch
-
-partyList-deploy:
-	forge script script/PartyList.s.sol:Deploy --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
 partyList-verify:
 	forge verify-contract \
 	0x34163568688fad1086b730FCa9e677aD4D585aa6 \
