@@ -7,7 +7,6 @@ import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useRouter, useSearchParams } from "next/navigation";
-import { polygonAmoy } from "wagmi/chains";
 import { useReadContract } from "wagmi";
 import { useState } from "react";
 
@@ -42,7 +41,8 @@ function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
 				address: partyAddr as `0x${string}`,
 				functionName: 'burnBeer',
 				args: [address as `0x${string}`, BigInt(value)],
-				chainId: polygonAmoy.id
+				// @ts-expect-error idk
+				chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 			});
 			await waitForTransactionReceipt(config, {
 				hash: resultBurn,
@@ -118,19 +118,22 @@ export default function EventPage() {
 		abi: partyAbi,
 		address: searchParams.get("addr") as `0x${string}`,
 		functionName: 'owner',
-		chainId: polygonAmoy.id
+		// @ts-expect-error idk
+		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 	});
 	const { data: beer } = useReadContract({
 		abi: partyAbi,
 		address: searchParams.get("addr") as `0x${string}`,
 		functionName: 'beer',
-		chainId: polygonAmoy.id
+		// @ts-expect-error idk
+		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 	});
 	const { data: usdc } = useReadContract({
 		abi: partyAbi,
 		address: searchParams.get("addr") as `0x${string}`,
 		functionName: 'usdc',
-		chainId: polygonAmoy.id
+		// @ts-expect-error idk
+		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 	});
 
 	return (<>

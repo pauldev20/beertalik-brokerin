@@ -7,7 +7,6 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { NextUIProvider } from "@nextui-org/react";
 import { useAccount, WagmiProvider } from "wagmi";
 import { config } from "@/lib/wagmi";
-import { polygonAmoy } from "viem/chains";
 import { useEffect } from "react";
 
 function SwitchNetwork() {
@@ -15,7 +14,7 @@ function SwitchNetwork() {
     const { isConnected } = useAccount();
 
     useEffect(() => {
-        const network = polygonAmoy.id;
+        const network = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "");
         (async () => {
             if (primaryWallet?.connector.supportsNetworkSwitching() && await primaryWallet?.getNetwork() !== network) {
                 await primaryWallet.switchNetwork(network);

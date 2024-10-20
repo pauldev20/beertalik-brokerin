@@ -10,7 +10,6 @@ import { gql, request } from 'graphql-request';
 import { erc20Abi, formatUnits } from "viem";
 import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
-import { polygonAmoy } from "wagmi/chains";
 import { useReadContract } from "wagmi";
 
 import ConnectWristbandModal from "@/components/connectWristbandModal";
@@ -39,7 +38,8 @@ export default function ChartPage() {
 		address: searchParams.get("usdc") as `0x${string}`,
 		functionName: 'balanceOf',
 		args: [primaryWallet?.address as `0x${string}`],
-		chainId: polygonAmoy.id
+		// @ts-expect-error idk
+		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 	});
 
 	async function buyBeer() {
@@ -57,7 +57,8 @@ export default function ChartPage() {
 					searchParams.get("party") as `0x${string}`,
 					BigInt(10000000)
 				],
-				chainId: polygonAmoy.id
+				// @ts-expect-error idk
+				chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 			});
 			await waitForTransactionReceipt(config, {
 				hash: resultAllow,
@@ -67,7 +68,8 @@ export default function ChartPage() {
 				abi: partyAbi,
 				address: searchParams.get("party") as `0x${string}`,
 				functionName: 'buy',
-				chainId: polygonAmoy.id
+				// @ts-expect-error idk
+				chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 			});
 			await waitForTransactionReceipt(config, {
 				hash: resultBuy,

@@ -5,7 +5,6 @@ import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Spinner, us
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-import { polygonAmoy } from "wagmi/chains";
 import { useReadContract } from "wagmi";
 
 import BasicPage from "@/components/basicPage";
@@ -74,7 +73,8 @@ export default function MainPage() {
 		abi: partyListAbi,
 		address: process.env.NEXT_PUBLIC_PARTY_LIST_CONTRACT_ADDRESS as `0x${string}`,
 		functionName: 'getPartyNames',
-		chainId: polygonAmoy.id
+		// @ts-expect-error idk
+		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 	});
 	useEffect(() => {
 		if (partys === undefined) return;
