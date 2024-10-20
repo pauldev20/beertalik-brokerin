@@ -1,4 +1,3 @@
-- cleanup code
 - make add to homescreen better
 - implement multiple chains somehow
 - test burning of beers
