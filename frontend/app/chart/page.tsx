@@ -89,12 +89,18 @@ export default function ChartPage() {
 	function convertToChartData(data) {
 		// @ts-expect-error idk
 		const formatPrice = price => parseFloat(price) / 1000000;
+		// @ts-expect-error idk
+		const sortedData = data.sort((a, b) => {
+			if (parseInt(a.blockNumber) === parseInt(b.blockNumber)) {
+			  return a.price - b.price; // Ascending order by price
+			}
+			return parseInt(a.blockNumber) - parseInt(b.blockNumber); // Ascending order by blockNumber
+		});
 		const result = [["Time", "", "", "", ""]];
 		// @ts-expect-error idk
-		data.forEach((item, index) => {
+		sortedData.forEach((item, index) => {
 			const price = formatPrice(item.price);
 			const previousPrice = index > 0 ? formatPrice(data[index - 1].price) : price;
-			
 			result.push([item.blockNumber, previousPrice, previousPrice, price, price]);
 		});
 		return result;
