@@ -29,3 +29,12 @@ contract GetPrice is Script {
         console.log(party.getPrice());
     }
 }
+
+contract ChangeOwner is Script {
+    function run() public {
+        Party party = Party(0x6D2063D32EFacbb20B27cFE1F8683747201d3867);
+        vm.broadcast();
+        party.transferOwnership(0xeaDf4F13aeE8A2fe5feAE57dBC92CbE26b2671b1);
+    }
+}
+
