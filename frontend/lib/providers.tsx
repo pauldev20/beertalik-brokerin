@@ -32,7 +32,8 @@ export default function Providers({ children }: Readonly<{ children: React.React
                                 decimals: 18,
                             }
                         }], networks),
-                    }
+                    },
+                    mobileExperience: 'redirect'
                 }}
             >
                 <WagmiProvider config={config}>
