@@ -10,9 +10,12 @@ app = Flask(__name__)
 
 RPC_SEPOLIA = "https://sepolia.drpc.org"
 RPC_POLYGON_AMOY = "https://polygon-amoy.blockpi.network/v1/rpc/public"
+RPC_SKALE = "https://testnet.skalenodes.com/v1/giant-half-dual-testnet"
+
 PRIVATE_KEY = os.environ.get("PRIVATE_KEY")
 SENDER_ADDRESS = os.environ.get("ADDRESS")
-USDC_ADDRESS = "0x927fB1414F83905620F460B024bcFf2dD1dA430c"
+POLY_USDC_ADDRESS = "0x927fB1414F83905620F460B024bcFf2dD1dA430c"
+SKALE_USDC_ADDRESS = "0xdA71C2714017c0CE1E3FC99c2667D9AC0c104150"
 
 web3_sepolia = Web3(Web3.HTTPProvider(RPC_SEPOLIA))
 if not web3_sepolia.is_connected():
@@ -24,6 +27,11 @@ if not web3_polygon_amoy.is_connected():
     print("Failed to connect to Ethereum network")
     exit()
 web3_polygon_amoy.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
+
+web3_skale = Web3(Web3.HTTPProvider(RPC_SKALE))
+if not web3_skale.is_connected():
+    print("Failed to connect to Ethereum network")
+    exit()
 
 ENS_ABI = [
     {
@@ -54,8 +62,8 @@ USDC_ABI = [
         "type": "function",
     }
 ]
-usdc_contract = web3_polygon_amoy.eth.contract(address=USDC_ADDRESS, abi=USDC_ABI)
-
+usdc_poly_contract = web3_polygon_amoy.eth.contract(address=POLY_USDC_ADDRESS, abi=USDC_ABI)
+usdc_skale_contract = web3_skale.eth.contract(address=SKALE_USDC_ADDRESS, abi=USDC_ABI)
 
 @app.route("/register", methods=["POST"])
 def run_register():
@@ -83,8 +91,8 @@ def run_register():
     return {"status": "ok", "tx": "0x" + tx_hash.hex()}, 200
 
 
-@app.route("/fund", methods=["POST"])
-def run_fund():
+@app.route("/fund-poly", methods=["POST"])
+def run_fund_poly():
     address = request.args.get("address") or request.form.get("address")
 
     if not address:
@@ -94,7 +102,7 @@ def run_fund():
         )
 
     nonce = web3_polygon_amoy.eth.get_transaction_count(SENDER_ADDRESS)
-    txn = usdc_contract.functions.mint(address, int(10e6)).build_transaction(
+    txn = usdc_poly_contract.functions.mint(address, int(10e6)).build_transaction(
         {
             "from": SENDER_ADDRESS,
             "nonce": nonce,
@@ -125,6 +133,35 @@ def run_fund():
     print("0x" + tx_hash2.hex())
 
     return {"status": "ok", "tx1": "0x" + tx_hash.hex(), "tx2": "0x" + tx_hash2.hex()}, 200
+
+
+@app.route("/fund-skale", methods=["POST"])
+def run_fund_skale():
+    address = request.args.get("address") or request.form.get("address")
+
+    if not address:
+        return (
+            jsonify({"status": "error", "message": "Missing 'address' parameter"}),
+            400,
+        )
+
+    nonce = web3_skale.eth.get_transaction_count(SENDER_ADDRESS)
+    txn = usdc_skale_contract.functions.mint(address, int(10e6)).build_transaction(
+        {
+            "from": SENDER_ADDRESS,
+            "nonce": nonce,
+        }
+    )
+    signed_txn = web3_skale.eth.account.sign_transaction(
+        txn, private_key=PRIVATE_KEY
+    )
+    tx_hash = web3_skale.eth.send_raw_transaction(signed_txn.raw_transaction)
+    print("0x" + tx_hash.hex())
+
+    amount_in_eth = 0.001 
+    amount_in_wei = web3_skale.to_wei(amount_in_eth, 'ether')
+
+    return {"status": "ok", "tx1": "0x" + tx_hash.hex()}, 200
 
 
 if __name__ == "__main__":
