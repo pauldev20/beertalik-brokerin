@@ -29,12 +29,23 @@ ensSub-addEventDomain:
 ensSub-addEventSubDomain:
 	forge script script/ENSSubdomainCreator.s.sol:AddEventSubDomain asd 0x9F79941335e54A11eCD13cedf58375657FdA97A1 --sig 'run(string,address)' --broadcast --fork-url $(RPC_SEPOLIA) --private-key $(PRIVATE_KEY) -vvvv --ffi
 
+CONSTRUCTOR_ARGS := $(shell cast abi-encode "constructor(address)" $(ADDRESS))
+usdc-verify:
+	forge verify-contract \
+	0x927fB1414F83905620F460B024bcFf2dD1dA430c \
+	src/USDC.sol:USDC \
+	--verifier-url https://api-amoy.polygonscan.com/api/ \
+	-e $(POLYSCAN_API_KEY) \
+	--rpc-url $(RPC) \
+	--guess-constructor-args \
+	--chain polygon-amoy \
+	--watch
 
 partyList-deploy:
 	forge script script/PartyList.s.sol:Deploy --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
 partyList-verify:
 	forge verify-contract \
-	0xd32fC62C33C7E359D1E41f87d7C0f24c9f365D5e \
+	0x34163568688fad1086b730FCa9e677aD4D585aa6 \
 	src/PartyList.sol:PartyList \
 	--verifier-url https://api-amoy.polygonscan.com/api/ \
 	-e $(POLYSCAN_API_KEY) \
@@ -46,10 +57,10 @@ partyList-verify:
 
 partyList-create-party:
 	forge script script/PartyList.s.sol:CreateParty --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
-CONSTRUCTOR_ARGS := $(shell cast abi-encode "constructor(address,string,address,uint256,uint256,uint256,uint256)" $(ADDRESS) "ETHGlobal SF" 0x029b1c31F27a5ae6066cA42ED46F18566f0c8502 3000000 500000 10 500000)
+CONSTRUCTOR_ARGS := $(shell cast abi-encode "constructor(address,string,address,uint256,uint256,uint256,uint256)" $(ADDRESS) "ETHGlobal SF" 0x927fB1414F83905620F460B024bcFf2dD1dA430c 3000000 500000 10 500000)
 party-verify:
 	forge verify-contract \
-	0xbA65a69d90E2f9337744dfa365EA3D7064444Fe5 \
+	0x6D2063D32EFacbb20B27cFE1F8683747201d3867 \
 	src/Party.sol:Party \
 	--verifier-url https://api-amoy.polygonscan.com/api/ \
 	-e $(POLYSCAN_API_KEY) \
@@ -65,6 +76,10 @@ party-get-price:
 
 test:
 	forge test --match-test "test_RegisterDomain" --fork-url ${RPC_SEPOLIA} -vvvv
+
+fund:
+	forge script script/USDC.s.sol:FundUSDC --broadcast --fork-url $(POLYGON_AMOY_RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
+
 
 fork:
 	anvil -f wss://sepolia.drpc.org

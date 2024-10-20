@@ -74,4 +74,18 @@ contract PartyTest is Test {
         party.burnBeer(address(0x1337), 2);
         assertEq(0, party.beer().balanceOf(address(this)));
     }
+
+    function test_transferOwner() public {
+        party.buy();
+        party.buy();
+        party.approveNFC(address(0x1337));
+
+        party.transferOwnership(address(0x69));
+
+        vm.expectRevert();
+        party.burnBeer(address(0x1337), 2);
+
+        vm.prank(address(0x69));
+        party.burnBeer(address(0x1337), 2);
+    }
 }

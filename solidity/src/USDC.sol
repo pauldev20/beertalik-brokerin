@@ -7,7 +7,7 @@ import {ERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.s
 contract USDC is ERC20, Ownable {
     constructor(
         address owner
-    ) ERC20("USDC", "USDC") Ownable(owner) {}
+    ) ERC20("MY USDC", "MUSDC") Ownable(owner) {}
 
     function decimals() public override pure returns (uint8) {
         return 6;
