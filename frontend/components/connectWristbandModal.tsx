@@ -30,9 +30,11 @@ export default function ConnectWristbandModal({ isOpen, onOpenChange, refresh }:
 			  name: "get_pkeys"
 			});
 			const address = result["etherAddresses"]["1"];
-			const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(`${process.env.NEXT_PUBLIC_SERVER_URL}/register?name=${username}&address=${address}`));
+			await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(`${process.env.NEXT_PUBLIC_SERVER_URL}/register?name=${username}&address=${address}`));
+			if (refresh) {
+				refresh();
+			}
 			onOpenChange(false);
-			refresh && refresh();
 			setLoading(false);
 		} catch (e) {
 			console.log(e);

@@ -66,7 +66,7 @@ export default function Main() {
 	const { handleLogOut } = useDynamicContext();
 	const router = useRouter();
 
-	let { data: partys } = useReadContract({
+	const { data: partys } = useReadContract({
 		abi,
 		address: process.env.NEXT_PUBLIC_PARTY_LIST_CONTRACT_ADDRESS as `0x${string}`,
 		functionName: 'getPartyNames',

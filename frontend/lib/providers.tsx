@@ -1,6 +1,6 @@
 "use client";
 
-import { DynamicContextProvider, DynamicWidget, mergeNetworks, useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { DynamicContextProvider, mergeNetworks, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
@@ -21,7 +21,7 @@ function SwitchNetwork() {
                 await primaryWallet.switchNetwork(network);
             }
         })();
-    }, [isConnected]);
+    }, [isConnected, primaryWallet]);
 
     return (<></>);
 }
@@ -58,7 +58,6 @@ export default function Providers({ children }: Readonly<{ children: React.React
                     <QueryClientProvider client={queryClient}>
                         <DynamicWagmiConnector>
                             <SwitchNetwork />
-                            {/* <DynamicWidget /> */}
                             {children}
                         </DynamicWagmiConnector>
                     </QueryClientProvider>

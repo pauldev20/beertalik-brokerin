@@ -109,19 +109,19 @@ export default function EventPage() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 
-	let { data: owner } = useReadContract({
+	const { data: owner } = useReadContract({
 		abi,
 		address: searchParams.get("addr") as `0x${string}`,
 		functionName: 'owner',
 		chainId: polygonAmoy.id
 	});
-	let { data: beer } = useReadContract({
+	const { data: beer } = useReadContract({
 		abi,
 		address: searchParams.get("addr") as `0x${string}`,
 		functionName: 'beer',
 		chainId: polygonAmoy.id
 	});
-	let { data: usdc } = useReadContract({
+	const { data: usdc } = useReadContract({
 		abi,
 		address: searchParams.get("addr") as `0x${string}`,
 		functionName: 'usdc',

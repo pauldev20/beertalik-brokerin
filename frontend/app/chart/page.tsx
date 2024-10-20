@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Chart } from "react-google-charts";
 import { useReadContract } from "wagmi";
 import partyAbi from "@/contracts/partyAbi.json";
-import { polygonAmoy, sepolia } from "wagmi/chains";
+import { polygonAmoy } from "wagmi/chains";
 import { erc20Abi, formatUnits } from "viem";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { config } from "@/lib/wagmi";
@@ -29,7 +29,7 @@ export default function BeerPage() {
 	const { beerBalance, refetchBeer } = useBeerBalance(searchParams.get("beer") as `0x${string}`);
 	const { name } = useAddressName();
 
-	let { data: USDCBalance, refetch: refetchUSDC } = useReadContract({
+	const { data: USDCBalance, refetch: refetchUSDC } = useReadContract({
 		abi: erc20Abi,
 		address: searchParams.get("usdc") as `0x${string}`,
 		functionName: 'balanceOf',

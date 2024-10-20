@@ -7,6 +7,8 @@ import Providers from "@/lib/providers";
 
 import { siteConfig } from "@/lib/siteConfig";
 import InstallPrompt from "@/components/installPrompt";
+import { Suspense } from "react";
+import { Spinner } from "@nextui-org/react";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
@@ -35,7 +37,9 @@ export default function RootLayout({
             <body className={clsx(notoSans.className, "antialiased")}>
                 <Providers>
                     <InstallPrompt>
-                        {children}
+                        <Suspense fallback={<Spinner size="lg" className="mt-auto ml-auto mr-auto mb-auto" />}>
+                            {children}
+                        </Suspense>
                     </InstallPrompt>
                 </Providers>
             </body>
