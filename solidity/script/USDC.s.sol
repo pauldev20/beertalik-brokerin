@@ -6,6 +6,7 @@ import "../src/USDC.sol";
 import {Script, console} from "forge-std/Script.sol";
 
 contract FundUSDC is Script {
+    
     function run() public {
         USDC usdc = USDC(0x927fB1414F83905620F460B024bcFf2dD1dA430c);
 

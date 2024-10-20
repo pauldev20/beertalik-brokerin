@@ -32,5 +32,42 @@ Every purchase of beer emits the following event:
 
 These events are getting indexed by The Graph to display a price chart on the app.
 
+## ENS flow
+```mermaid
+sequenceDiagram
+    actor User
+    participant Event
+    participant List as EventList
+    actor Organiser
+
+    Organiser->>List: createEvent()
+    List->>Event: new Event + ENS name
+    Note over List,Event: event.beertalik.eth
+    User-->>Organiser: register NFC as kartik
+    Organiser->>Event: register NFC as kartik
+    Note over User,Event: kartik.event.beertalik.eth
+```
+
+## NFC flow
+```mermaid
+sequenceDiagram
+    actor User
+    participant NFC wristband
+    participant Event
+    actor Barkeeper
+
+    User<<->>NFC wristband: read NFC
+    User-->>Event: register NFC
+    Note over User,Event: kartik.event.beertalik.eth
+
+    Barkeeper<<->>NFC wristband: read NFC
+    Barkeeper->>Event: burn beer 
+```
+
 ## Future Outlook
+
+- replace ERC20 with ERC1155 to enable multiple drinks for an event
+- allow for easy trading among customers
+- better price chart
+- add small fee for development cost
 

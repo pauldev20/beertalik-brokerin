@@ -93,10 +93,11 @@ def run_fund():
             400,
         )
 
+    nonce = web3_polygon_amoy.eth.get_transaction_count(SENDER_ADDRESS)
     txn = usdc_contract.functions.mint(address, int(10e6)).build_transaction(
         {
             "from": SENDER_ADDRESS,
-            "nonce": web3_polygon_amoy.eth.get_transaction_count(SENDER_ADDRESS),
+            "nonce": nonce,
         }
     )
     signed_txn = web3_polygon_amoy.eth.account.sign_transaction(
@@ -105,12 +106,12 @@ def run_fund():
     tx_hash = web3_polygon_amoy.eth.send_raw_transaction(signed_txn.raw_transaction)
     print("0x" + tx_hash.hex())
 
-    amount_in_eth = 0.001  # Adjust as needed
+    amount_in_eth = 0.01  # Adjust as needed
     amount_in_wei = web3_polygon_amoy.to_wei(amount_in_eth, 'ether')
 
     txn2 = {
         "from": SENDER_ADDRESS,
-        'nonce': web3_polygon_amoy.eth.get_transaction_count(SENDER_ADDRESS),
+        'nonce': nonce + 1,
         'gas': 21000,
         'gasPrice': web3_polygon_amoy.to_wei('50', 'gwei'),
         'to': address,
