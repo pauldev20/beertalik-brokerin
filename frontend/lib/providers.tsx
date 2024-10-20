@@ -1,12 +1,30 @@
 "use client";
 
-import { DynamicContextProvider, mergeNetworks } from "@dynamic-labs/sdk-react-core";
+import { DynamicContextProvider, DynamicWidget, mergeNetworks, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { NextUIProvider } from "@nextui-org/react";
-import { WagmiProvider } from "wagmi";
+import { useAccount, WagmiProvider } from "wagmi";
 import { config } from "@/lib/wagmi";
+import { polygonAmoy } from "viem/chains";
+import { useEffect } from "react";
+
+function SwitchNetwork() {
+    const { primaryWallet } = useDynamicContext();
+    const { isConnected } = useAccount();
+
+    useEffect(() => {
+        const network = polygonAmoy.id;
+        (async () => {
+            if (primaryWallet?.connector.supportsNetworkSwitching() && await primaryWallet?.getNetwork() !== network) {
+                await primaryWallet.switchNetwork(network);
+            }
+        })();
+    }, [isConnected]);
+
+    return (<></>);
+}
 
 export default function Providers({ children }: Readonly<{ children: React.ReactNode }>) {
     const queryClient = new QueryClient();
@@ -16,7 +34,7 @@ export default function Providers({ children }: Readonly<{ children: React.React
             <DynamicContextProvider
                 theme="auto"
                 settings={{
-                    environmentId: "fb7c1871-69a6-4f92-a54c-8c85bbb70b8c",
+                    environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID || "",
                     walletConnectors: [EthereumWalletConnectors],
                     overrides: {
                         evmNetworks: (networks) => mergeNetworks([{
@@ -30,7 +48,7 @@ export default function Providers({ children }: Readonly<{ children: React.React
                                 name: "sFUEL",
                                 symbol: "sFUEL",
                                 decimals: 18,
-                            }
+                            },
                         }], networks),
                     },
                     mobileExperience: 'redirect'
@@ -39,6 +57,8 @@ export default function Providers({ children }: Readonly<{ children: React.React
                 <WagmiProvider config={config}>
                     <QueryClientProvider client={queryClient}>
                         <DynamicWagmiConnector>
+                            <SwitchNetwork />
+                            {/* <DynamicWidget /> */}
                             {children}
                         </DynamicWagmiConnector>
                     </QueryClientProvider>

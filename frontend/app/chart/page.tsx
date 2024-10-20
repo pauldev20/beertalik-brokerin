@@ -6,10 +6,19 @@ import { useQuery } from '@tanstack/react-query';
 import BasicPage from "@/components/basicPage";
 import { gql, request } from 'graphql-request';
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Chart } from "react-google-charts";
 // @ts-expect-error idk
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
+import { useReadContract, useWriteContract } from "wagmi";
+import abi from "@/contracts/ensAbi.json";
+import partyAbi from "@/contracts/partyAbi.json";
+import { polygonAmoy, sepolia } from "wagmi/chains";
+import { erc20Abi } from "viem";
+import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
+import { config } from "@/lib/wagmi";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import useBeerBalance from "@/hooks/useBeerBalance";
 
 interface ConnectWristbandModalProps {
 	isOpen: boolean;
@@ -50,12 +59,55 @@ function ConnectWristbandModal({ isOpen, onOpenChange}: ConnectWristbandModalPro
 export default function BeerPage() {
 	const {isOpen, onOpen, onOpenChange} = useDisclosure();
 	const [chartData, setChartData] = useState([]);
+	const { primaryWallet } = useDynamicContext();
+	const [loading, setLoading] = useState(false);
+	const searchParams = useSearchParams();
 	const router = useRouter();
+	useBeerBalance(searchParams.get("beer") as `0x${string}`);
 
-	// const result = useEnsName({
-	// 	address: '0x0000000000000000000000000000000000001337',
+	// let { data: name } = useReadContract({
+	// 	abi,
+	// 	address: '0x927fB1414F83905620F460B024bcFf2dD1dA430c',
+	// 	functionName: 'getName',
+	// 	args: ['0x66664013474a29e9807D1736B1B1123F63345e22'],
 	// 	chainId: sepolia.id
 	// });
+	// name = name && !String(name).startsWith('.') ? name : undefined;
+
+	async function buyBeer() {
+		setLoading(true);
+		const resultAllow = await writeContract(config, {
+			abi: erc20Abi,
+			address: searchParams.get("usdc") as `0x${string}`,
+			functionName: 'approve',
+			args: [
+				searchParams.get("party") as `0x${string}`,
+				BigInt(10000000)
+			],
+			chainId: polygonAmoy.id
+		});
+		await waitForTransactionReceipt(config, {
+			hash: resultAllow,
+			confirmations: 1
+		});
+		const resultBuy = await writeContract(config, {
+			abi: partyAbi,
+			address: searchParams.get("party") as `0x${string}`,
+			functionName: 'buy',
+			chainId: polygonAmoy.id
+		});
+		await waitForTransactionReceipt(config, {
+			hash: resultBuy,
+			confirmations: 1
+		});
+		console.log("result", resultAllow, resultBuy);
+		setLoading(false);
+		// if (name === undefined) {
+		// 	onOpen();
+		// } else {
+		// 	console.log("Buying beer");
+		// }
+	}
 
 	// @ts-expect-error idk
 	function convertToChartData(data) {
@@ -120,6 +172,7 @@ export default function BeerPage() {
 					chartType="CandlestickChart"
 					width="100%"
 					height="400px"
+					loader={<Spinner size="lg" />}
 					data={chartData}
 					options={{
 						legend: "none",
@@ -156,10 +209,10 @@ export default function BeerPage() {
 					}}
 				/>
 				<div className="mt-auto flex justify-between gap-3">
-					<Button color="success" className="flex-grow" onClick={onOpen}>
+					<Button color="success" className="flex-grow" onClick={buyBeer} isLoading={loading}>
 						Buy
 					</Button>
-					<Button color="danger" className="flex-grow">
+					<Button color="danger" className="flex-grow" isDisabled>
 						Sell
 					</Button>
 				</div>

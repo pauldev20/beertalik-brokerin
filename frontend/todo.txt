@@ -1,0 +1,6 @@
+- buy your beer
+- see your usdc
+- see and change address/username
+- fix routing/protected
+- make add to homescreen better
+- implement multiple chains somehow
