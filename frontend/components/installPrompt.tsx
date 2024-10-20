@@ -18,8 +18,7 @@ export default function InstallPrompt({ children }: Readonly<{ children: React.R
     }, []);
     useEffect(() => {
         const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-        // setIsMobile(mobileRegex.test(navigator.userAgent) || window.innerWidth < 768);
-        setIsMobile(true);
+        setIsMobile(mobileRegex.test(navigator.userAgent) || window.innerWidth < 768);
     }, []);
 
     if (isStandalone) {
