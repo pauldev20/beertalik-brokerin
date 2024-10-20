@@ -7,13 +7,24 @@ import { config } from "@/lib/wagmi";
 import partyAbi from "@/contracts/partyAbi.json";
 import { useEffect, useState } from "react";
 
-export default function useAddressName(partyAddress: string, address?: string) {
+export async function getENSAddessForNFC(address: string) {
+	const nameData = await readContract(config, {
+		abi: ensAbi,
+		address: process.env.NEXT_PUBLIC_CUSTOM_ENS_CONTRACT_ADDRESS as `0x${string}`,
+		functionName: 'getName',
+		args: [address as `0x${string}`],
+		chainId: sepolia.id
+	});
+	return (nameData ? (!String(nameData).startsWith('.') ? String(nameData) : undefined) : undefined);
+}
+
+export default function useAddressName(partyAddress: string) {
 	const { primaryWallet } = useDynamicContext();
 	const [nameData, setNameData] = useState<string | undefined>(undefined);
 
 	const fetchName = async () => {
 		try {
-			const mainWalletAddress = await readContract(config, {
+			const nfcWalletAddress = await readContract(config, {
 				abi: partyAbi,
 				address: partyAddress as `0x${string}`,
 				functionName: 'walletToNfc',
@@ -21,16 +32,9 @@ export default function useAddressName(partyAddress: string, address?: string) {
 				// @ts-expect-error idk
 				chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 			});
-			console.log("Main Wallet Address", mainWalletAddress);
-			const nameDataRes = await readContract(config, {
-				abi: ensAbi,
-				address: process.env.NEXT_PUBLIC_CUSTOM_ENS_CONTRACT_ADDRESS as `0x${string}`,
-				functionName: 'getName',
-				args: [mainWalletAddress as `0x${string}`],
-				chainId: sepolia.id
-			});
+			console.log("NFC Wallet Address", nfcWalletAddress);
+			const nameDataRes = await getENSAddessForNFC(nfcWalletAddress as string);
 			console.log("Name Data", nameDataRes);
-			// @ts-expect-error idk
 			setNameData(nameDataRes);
 		} catch (e) {
 			console.log(e);
@@ -41,7 +45,7 @@ export default function useAddressName(partyAddress: string, address?: string) {
 	}, [partyAddress]);
 
 	return {
-		name: (nameData ? (!String(nameData).startsWith('.') ? String(nameData) : undefined) : undefined),
+		name: nameData,
 		refetchName: fetchName
 	}
 }

@@ -21,7 +21,6 @@ export default function InstallPrompt({ children }: Readonly<{ children: React.R
         setIsMobile(mobileRegex.test(navigator.userAgent) || window.innerWidth < 768);
     }, []);
 
-    return children;
     if (isStandalone) {
         return children;
     }
@@ -45,7 +44,7 @@ export default function InstallPrompt({ children }: Readonly<{ children: React.R
                         <span className="inline-flex items-center align-middle">
                             <ArrowUpOnSquareIcon className="size-5 mx-1" />
                         </span>
-                        and then "Add to Home Screen"
+                        {'and then \"Add to Home Screen\"'}
                         <span className="inline-flex items-center align-middle">
                             <PlusIcon className="size-5 mx-1" />
                         </span>

@@ -13,6 +13,7 @@ import { useState } from "react";
 import BasicPage from "@/components/basicPage";
 import WalletAddress from "@/components/walletAddress";
 
+import { getENSAddessForNFC } from "@/hooks/useAddressName";
 import useBeerBalance from "@/hooks/useBeerBalance";
 import useBeerPrice from "@/hooks/useBeerPrice";
 import useLogin from "@/hooks/useLogin";
@@ -38,7 +39,7 @@ function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
 				name: "get_pkeys"
 			});
 			const address = result["etherAddresses"]["1"];
-			setUser(address);
+			setUser(await getENSAddessForNFC(address));
 			setLoadingWristband(false);
 		} catch (e) {
 			console.log(e);
