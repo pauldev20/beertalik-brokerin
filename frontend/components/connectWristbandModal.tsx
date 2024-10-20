@@ -17,7 +17,7 @@ export default function ConnectWristbandModal({ isOpen, onOpenChange, refresh }:
 	const { primaryWallet } = useDynamicContext();
 	const [loading, setLoading] = useState(false);
 	const [username, setUsername] = useState("");
-	const name = useAddressName();
+	const { name } = useAddressName();
 
 	async function btnClick() {
 		setLoading(true);

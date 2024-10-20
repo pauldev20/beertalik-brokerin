@@ -103,10 +103,6 @@ export default function Main() {
 			topLeftClick={logout}
 			topRightBtn={<PlusIcon/>}
 			topRightClick={onOpen}
-			// navbarItems={[
-			// 	{ icon: "HomeIcon", label: "Home", active: true },
-			// 	{ icon: "UserIcon", label: "Profile", onClick: () => router.replace("/profile") },
-			// ]}
 		>
 			<Input isClearable type="text" placeholder="Search" startContent={<MagnifyingGlassIcon className="size-4" />} onChange={handleSearch} />
 			{loading && <div className="flex flex-grow items-center justify-center gap-3">

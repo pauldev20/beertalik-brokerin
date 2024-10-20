@@ -27,7 +27,7 @@ export default function BeerPage() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const { beerBalance, refetchBeer } = useBeerBalance(searchParams.get("beer") as `0x${string}`);
-	const name = useAddressName();
+	const { name } = useAddressName();
 
 	let { data: USDCBalance, refetch: refetchUSDC } = useReadContract({
 		abi: erc20Abi,

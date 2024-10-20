@@ -1,4 +1,3 @@
-- buy your beer at bar
 - fix routing/protected
 - make add to homescreen better
 - implement multiple chains somehow

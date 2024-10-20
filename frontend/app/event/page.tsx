@@ -2,7 +2,7 @@
 
 import { ChevronLeftIcon, PlusIcon, WifiIcon } from "@heroicons/react/24/outline";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Card, CardBody, Spinner } from "@nextui-org/react";
+import { Button, Card, CardBody, Input, Modal, ModalBody, ModalContent, ModalHeader, Spinner, useDisclosure } from "@nextui-org/react";
 import BasicPage from "@/components/basicPage";
 import abi from "@/contracts/partyAbi.json";
 import { polygonAmoy } from "wagmi/chains";
@@ -10,6 +10,72 @@ import { useReadContract } from "wagmi";
 import useBeerBalance from "@/hooks/useBeerBalance";
 import useBeerPrice from "@/hooks/useBeerPrice";
 import WalletAddress from "@/components/walletAddress";
+import { useState } from "react";
+import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
+import { config } from "@/lib/wagmi";
+// @ts-expect-error idk
+import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+
+interface BuyBeerModalProps {
+	isOpen: boolean;
+	onOpenChange: (isOpen: boolean) => void;
+	partyAddr: string;
+}
+function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
+	const [loading, setLoading] = useState(false);
+	const [value, setValue] = useState(1);
+
+	const btnClick = async () => {
+		try {
+			setLoading(true);
+			const result = await execHaloCmdWeb({
+				name: "get_pkeys"
+			});
+			const address = result["etherAddresses"]["1"];
+			const resultBurn = await writeContract(config, {
+				abi,
+				address: partyAddr as `0x${string}`,
+				functionName: 'burnBeer',
+				args: [address as `0x${string}`, BigInt(value)],
+				chainId: polygonAmoy.id
+			});
+			await waitForTransactionReceipt(config, {
+				hash: resultBurn,
+				confirmations: 1
+			});
+			console.log("Bought beer", resultBurn);
+			setLoading(false);
+		} catch (e) {
+			console.log(e);
+			setLoading(false);
+		}
+	}
+
+	return (
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange} hideCloseButton isDismissable={!loading}>
+			<ModalContent>
+				<ModalHeader className="flex items-center justify-between">Checkout</ModalHeader>
+				<ModalBody>
+					<div className="flex items-center justify-between">
+						<h1>Stuttgarter Hofbräu</h1>
+						<Input
+							className="w-32"
+							type="number"
+							label="Amount"
+							value={value.toString()}
+							onChange={(e) => setValue(parseInt(e.target.value))}
+							labelPlacement="inside"
+						/>
+					</div>
+					<Button color="primary" className="mb-5" isLoading={loading} onClick={btnClick}>
+						Scan Wristband
+					</Button>
+				</ModalBody>
+			</ModalContent>
+		</Modal>
+	)
+}
 
 interface BeerProps {
 	addr: string;
@@ -38,6 +104,8 @@ function Beer({ addr, party, usdc }: BeerProps) {
 }
 
 export default function EventPage() {
+	const { isOpen, onOpen, onOpenChange } = useDisclosure();
+	const { primaryWallet } = useDynamicContext();
 	const searchParams = useSearchParams();
 	const router = useRouter();
 
@@ -60,12 +128,13 @@ export default function EventPage() {
 		chainId: polygonAmoy.id
 	});
 
-	return (
+	return (<>
+		<BuyBeerModal isOpen={isOpen} onOpenChange={onOpenChange} partyAddr={searchParams.get("addr") || ""} />
 		<BasicPage
 			topLeftBtn={<ChevronLeftIcon />}
 			topLeftClick={() => router.replace("/main")}
-			topRightBtn={owner ? <WifiIcon /> : <></>}
-			topRightClick={() => console.log("scan")}
+			topRightBtn={primaryWallet?.address == owner ? <WifiIcon /> : <></>}
+			topRightClick={() => onOpen()}
 			emoji="🍺"
 			pageTitle="Beers"
 		>
@@ -82,5 +151,5 @@ export default function EventPage() {
 				<WalletAddress className="self-center mt-auto"/>
 			</>)}
 		</BasicPage>
-	)
+	</>)
 }
