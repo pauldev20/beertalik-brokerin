@@ -1,16 +1,18 @@
 "use client";
 
 import { ArrowLeftStartOnRectangleIcon, ChevronRightIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { useRouter } from 'next/navigation';
-
 import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Spinner, useDisclosure } from "@nextui-org/react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useState } from "react";
-import BasicPage from "@/components/basicPage";
-import { useReadContract } from "wagmi";
-import abi from "@/contracts/partyListAbi.json";
+import { useRouter } from 'next/navigation';
 import { polygonAmoy } from "wagmi/chains";
+import { useReadContract } from "wagmi";
+
+import BasicPage from "@/components/basicPage";
+
 import useLogin from "@/hooks/useLogin";
+
+import abi from "@/contracts/partyListAbi.json";
 
 interface CreateEventModalProps {
 	isOpen: boolean;

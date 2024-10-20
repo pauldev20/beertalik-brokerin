@@ -1,22 +1,25 @@
 "use client";
 
-import { ChevronLeftIcon, PlusIcon, WifiIcon } from "@heroicons/react/24/outline";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Button, Card, CardBody, Input, Modal, ModalBody, ModalContent, ModalHeader, Spinner, useDisclosure } from "@nextui-org/react";
-import BasicPage from "@/components/basicPage";
-import abi from "@/contracts/partyAbi.json";
-import { polygonAmoy } from "wagmi/chains";
-import { useReadContract } from "wagmi";
-import useBeerBalance from "@/hooks/useBeerBalance";
-import useBeerPrice from "@/hooks/useBeerPrice";
-import WalletAddress from "@/components/walletAddress";
-import { useState } from "react";
+import { ChevronLeftIcon, PlusIcon, WifiIcon } from "@heroicons/react/24/outline";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
-import { config } from "@/lib/wagmi";
 // @ts-expect-error idk
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { useRouter, useSearchParams } from "next/navigation";
+import { polygonAmoy } from "wagmi/chains";
+import { useReadContract } from "wagmi";
+import { useState } from "react";
+
+import BasicPage from "@/components/basicPage";
+import WalletAddress from "@/components/walletAddress";
+
+import useBeerBalance from "@/hooks/useBeerBalance";
+import useBeerPrice from "@/hooks/useBeerPrice";
 import useLogin from "@/hooks/useLogin";
+
+import abi from "@/contracts/partyAbi.json";
+import { config } from "@/lib/wagmi";
 
 interface BuyBeerModalProps {
 	isOpen: boolean;

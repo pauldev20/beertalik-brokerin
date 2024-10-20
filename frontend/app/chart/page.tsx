@@ -1,24 +1,27 @@
 "use client";
 
 import { Button, Card, CardBody, Spinner, useDisclosure } from "@nextui-org/react";
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
-import { useQuery } from '@tanstack/react-query';
-import BasicPage from "@/components/basicPage";
-import { gql, request } from 'graphql-request';
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Chart } from "react-google-charts";
-import { useReadContract } from "wagmi";
-import partyAbi from "@/contracts/partyAbi.json";
-import { polygonAmoy } from "wagmi/chains";
-import { erc20Abi, formatUnits } from "viem";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
-import { config } from "@/lib/wagmi";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import useBeerBalance from "@/hooks/useBeerBalance";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from '@tanstack/react-query';
+import { gql, request } from 'graphql-request';
+import { erc20Abi, formatUnits } from "viem";
+import { useEffect, useState } from "react";
+import { Chart } from "react-google-charts";
+import { polygonAmoy } from "wagmi/chains";
+import { useReadContract } from "wagmi";
+
 import ConnectWristbandModal from "@/components/connectWristbandModal";
+import BasicPage from "@/components/basicPage";
+
+import useBeerBalance from "@/hooks/useBeerBalance";
 import useAddressName from "@/hooks/useAddressName";
 import useLogin from "@/hooks/useLogin";
+
+import partyAbi from "@/contracts/partyAbi.json";
+import { config } from "@/lib/wagmi";
 
 export default function ChartPage() {
 	const {isOpen, onOpen, onOpenChange} = useDisclosure();
