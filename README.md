@@ -18,7 +18,10 @@ A smart contract manages and stores a list of all ongoing events. This smart con
 
 When users join an event, they call a function to link their NFC wristband and create an ENS subname.
 The NFC wristband is a simple address to address mapping inside the smart contract.
-The ENS names use a custom resolver on sepolia.
+Every event is its own ens subname each user has a subname for that event:
+
+https://app.ens.domains/ethglobal-sf.beertalik.eth?tab=subnames
+
 Currently the beer token is a simple ERC20 token for simplicity but can easily be exchanged for an ERC1155 when different kinds of drinks want to be added to the event.
 
 The event merchant, as the owner of the event contract, can scan the NFC wristband to view the user’s ENS name and burn tokens from the user’s account during redemption.
@@ -29,5 +32,42 @@ Every purchase of beer emits the following event:
 
 These events are getting indexed by The Graph to display a price chart on the app.
 
+## ENS flow
+```mermaid
+sequenceDiagram
+    actor User
+    participant Event
+    participant List as EventList
+    actor Organiser
+
+    Organiser->>List: createEvent()
+    List->>Event: new Event + ENS name
+    Note over List,Event: event.beertalik.eth
+    User-->>Organiser: register NFC as kartik
+    Organiser->>Event: register NFC as kartik
+    Note over User,Event: kartik.event.beertalik.eth
+```
+
+## NFC flow
+```mermaid
+sequenceDiagram
+    actor User
+    participant NFC wristband
+    participant Event
+    actor Barkeeper
+
+    User<<->>NFC wristband: read NFC
+    User-->>Event: register NFC
+    Note over User,Event: kartik.event.beertalik.eth
+
+    Barkeeper<<->>NFC wristband: read NFC
+    Barkeeper->>Event: burn beer 
+```
+
 ## Future Outlook
+
+- replace ERC20 with ERC1155 to enable multiple drinks for an event
+- allow for easy trading among customers
+- better price chart
+- add small fee for development cost
 

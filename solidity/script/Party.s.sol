@@ -12,8 +12,11 @@ contract BuyBeer is Script {
         USDC usdc = USDC(address(party.usdc()));
 
         vm.startBroadcast();
-        usdc.mint(msg.sender, 100e6);
-        usdc.approve(address(party), 100e6);
+        usdc.mint(msg.sender, 10000e6);
+        usdc.approve(address(party), 1000e6);
+        party.buy();
+        party.buy();
+        party.buy();
         party.buy();
         party.buy();
         vm.stopBroadcast();

@@ -9,8 +9,8 @@ contract Deploy is Script {
     function run() public {
         // vm.createSelectFork(vm.rpcUrl("sepolia"));
         vm.startBroadcast();
-        // address usdc = address(new USDC(msg.sender));
-        new PartyList(0x029b1c31F27a5ae6066cA42ED46F18566f0c8502);
+        address usdc = address(new USDC(msg.sender));
+        new PartyList(usdc);
         vm.stopBroadcast();
     }
 }
@@ -20,6 +20,6 @@ contract CreateParty is Script {
         PartyList list = PartyList(0xd32fC62C33C7E359D1E41f87d7C0f24c9f365D5e);
 
         vm.broadcast();
-        list.createParty("ETHGlobal SF");
+        list.createParty("ethglobal-sf.beertalik.eth");
     }
 }
