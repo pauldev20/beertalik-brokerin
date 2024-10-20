@@ -18,7 +18,7 @@ import useBeerBalance from "@/hooks/useBeerBalance";
 import useBeerPrice from "@/hooks/useBeerPrice";
 import useLogin from "@/hooks/useLogin";
 
-import abi from "@/contracts/partyAbi.json";
+import partyAbi from "@/contracts/partyAbi.json";
 import { config } from "@/lib/wagmi";
 
 interface BuyBeerModalProps {
@@ -38,7 +38,7 @@ function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
 			});
 			const address = result["etherAddresses"]["1"];
 			const resultBurn = await writeContract(config, {
-				abi,
+				abi: partyAbi,
 				address: partyAddr as `0x${string}`,
 				functionName: 'burnBeer',
 				args: [address as `0x${string}`, BigInt(value)],
@@ -115,19 +115,19 @@ export default function EventPage() {
 	useLogin();
 
 	const { data: owner } = useReadContract({
-		abi,
+		abi: partyAbi,
 		address: searchParams.get("addr") as `0x${string}`,
 		functionName: 'owner',
 		chainId: polygonAmoy.id
 	});
 	const { data: beer } = useReadContract({
-		abi,
+		abi: partyAbi,
 		address: searchParams.get("addr") as `0x${string}`,
 		functionName: 'beer',
 		chainId: polygonAmoy.id
 	});
 	const { data: usdc } = useReadContract({
-		abi,
+		abi: partyAbi,
 		address: searchParams.get("addr") as `0x${string}`,
 		functionName: 'usdc',
 		chainId: polygonAmoy.id

@@ -3,13 +3,13 @@ import { polygonAmoy } from "wagmi/chains";
 import { useReadContract } from "wagmi";
 import { formatUnits } from "viem";
 
-import abi from "@/contracts/partyAbi.json";
+import partyAbi from "@/contracts/partyAbi.json";
 
 export default function useBeerPrice(partyAddr: string) {
 	const { primaryWallet } = useDynamicContext();
 
 	let { data: price, refetch, isLoading } = useReadContract({
-		abi,
+		abi: partyAbi,
 		address: partyAddr as `0x${string}`,
 		functionName: 'getPrice',
 		chainId: polygonAmoy.id

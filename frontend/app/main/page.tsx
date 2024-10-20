@@ -12,7 +12,7 @@ import BasicPage from "@/components/basicPage";
 
 import useLogin from "@/hooks/useLogin";
 
-import abi from "@/contracts/partyListAbi.json";
+import partyListAbi from "@/contracts/partyListAbi.json";
 
 interface CreateEventModalProps {
 	isOpen: boolean;
@@ -71,7 +71,7 @@ export default function MainPage() {
 	useLogin();
 
 	const { data: partys } = useReadContract({
-		abi,
+		abi: partyListAbi,
 		address: process.env.NEXT_PUBLIC_PARTY_LIST_CONTRACT_ADDRESS as `0x${string}`,
 		functionName: 'getPartyNames',
 		chainId: polygonAmoy.id
