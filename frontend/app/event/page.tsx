@@ -16,6 +16,7 @@ import { config } from "@/lib/wagmi";
 // @ts-expect-error idk
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import useLogin from "@/hooks/useLogin";
 
 interface BuyBeerModalProps {
 	isOpen: boolean;
@@ -108,6 +109,7 @@ export default function EventPage() {
 	const { primaryWallet } = useDynamicContext();
 	const searchParams = useSearchParams();
 	const router = useRouter();
+	useLogin();
 
 	const { data: owner } = useReadContract({
 		abi,

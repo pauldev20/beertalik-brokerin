@@ -10,6 +10,7 @@ import BasicPage from "@/components/basicPage";
 import { useReadContract } from "wagmi";
 import abi from "@/contracts/partyListAbi.json";
 import { polygonAmoy } from "wagmi/chains";
+import useLogin from "@/hooks/useLogin";
 
 interface CreateEventModalProps {
 	isOpen: boolean;
@@ -48,7 +49,7 @@ function Event({ name, addr }: EventProps) {
 	const router = useRouter();
 
 	return (
-		<div className="flex w-full justify-between items-center active:opacity-50 transition-opacity duration-100" onClick={() => router.push(`/event?addr=${addr}`)}>
+		<div className="flex w-full justify-between items-center active:opacity-50 transition-opacity duration-100" onClick={() => router.replace(`/event?addr=${addr}`)}>
 			<div className="flex flex-col">
 				<h2 className="text-lg font-bold">{name}</h2>
 				<h3 className="text-sm opacity-75">{addr}</h3>
@@ -58,13 +59,14 @@ function Event({ name, addr }: EventProps) {
 	)
 }
 
-export default function Main() {
+export default function MainPage() {
 	const {isOpen, onOpen, onOpenChange} = useDisclosure();
 	const [results, setResults] = useState<EventProps[]>([]);
 	const [events, setEvents] = useState<EventProps[]>([]);
 	const [loading, setLoading] = useState(true);
 	const { handleLogOut } = useDynamicContext();
 	const router = useRouter();
+	useLogin();
 
 	const { data: partys } = useReadContract({
 		abi,

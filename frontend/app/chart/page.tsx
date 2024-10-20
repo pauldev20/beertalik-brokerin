@@ -18,8 +18,9 @@ import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import useBeerBalance from "@/hooks/useBeerBalance";
 import ConnectWristbandModal from "@/components/connectWristbandModal";
 import useAddressName from "@/hooks/useAddressName";
+import useLogin from "@/hooks/useLogin";
 
-export default function BeerPage() {
+export default function ChartPage() {
 	const {isOpen, onOpen, onOpenChange} = useDisclosure();
 	const [chartData, setChartData] = useState([]);
 	const { primaryWallet } = useDynamicContext();
@@ -28,6 +29,7 @@ export default function BeerPage() {
 	const router = useRouter();
 	const { beerBalance, refetchBeer } = useBeerBalance(searchParams.get("beer") as `0x${string}`);
 	const { name } = useAddressName();
+	useLogin();
 
 	const { data: USDCBalance, refetch: refetchUSDC } = useReadContract({
 		abi: erc20Abi,
@@ -129,7 +131,7 @@ export default function BeerPage() {
 		<ConnectWristbandModal isOpen={isOpen} onOpenChange={onOpenChange} />
 		<BasicPage
 			topLeftBtn={<ChevronLeftIcon />}
-			topLeftClick={() => router.replace("/event")}
+			topLeftClick={() => router.replace(`/event?addr=${searchParams.get("party")}`)}
 		>
 			{(chartData.length === 0 || USDCBalance === undefined) && <div className="flex flex-grow items-center justify-center gap-3">
 				<Spinner size="lg" />
