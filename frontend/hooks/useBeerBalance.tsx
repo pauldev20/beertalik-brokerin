@@ -6,7 +6,7 @@ import { erc20Abi } from "viem";
 export default function useBeerBalance(addr: string) {
 	const { primaryWallet } = useDynamicContext();
 
-	let { data: balance } = useReadContract({
+	let { data: balance, refetch, isLoading } = useReadContract({
 		abi: erc20Abi,
 		address: addr as `0x${string}`,
 		functionName: 'balanceOf',
@@ -14,5 +14,5 @@ export default function useBeerBalance(addr: string) {
 		chainId: polygonAmoy.id
 	});
 
-	return balance;
+	return {beerBalance: isLoading ? undefined : balance, refetchBeer: refetch, isLoading};
 }

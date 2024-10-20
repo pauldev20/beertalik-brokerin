@@ -7,8 +7,9 @@ import BasicPage from "@/components/basicPage";
 import abi from "@/contracts/partyAbi.json";
 import { polygonAmoy } from "wagmi/chains";
 import { useReadContract } from "wagmi";
-import erc20abi from "@/contracts/erc20Abi.json";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import useBeerBalance from "@/hooks/useBeerBalance";
+import useBeerPrice from "@/hooks/useBeerPrice";
+import WalletAddress from "@/components/walletAddress";
 
 interface BeerProps {
 	addr: string;
@@ -16,25 +17,21 @@ interface BeerProps {
 	usdc: string;
 }
 function Beer({ addr, party, usdc }: BeerProps) {
-	const { primaryWallet } = useDynamicContext();
+	const { beerBalance, isLoading } = useBeerBalance(addr as `0x${string}`);
+	const { beerPrice, isLoading: isLoadingPrice } = useBeerPrice(party);
 	const router = useRouter();
 
-	let { data: balance } = useReadContract({
-		abi: erc20abi,
-		address: addr as `0x${string}`,
-		functionName: 'balanceOf',
-		args: [primaryWallet?.address],
-		chainId: polygonAmoy.id
-	});
-
 	return (
-		<Card onClick={() => router.replace(`/chart?beer=${addr}&party=${party}&usdc=${usdc}`)} isPressable>
+		<Card onClick={() => router.replace(`/chart?beer=${addr}&party=${party}&usdc=${usdc}`)} isPressable={!isLoading}>
 			<CardBody className="w-full flex flex-row justify-between">
-				<div className="flex gap-2">
-					<h1 className="font-bold">{balance || 0}x</h1>
-					<h2>Stuttgarter Hofbräu</h2>
-				</div>
-				<span>1.00 $</span>
+				{(isLoading || isLoadingPrice) && <Spinner size="sm" className="ml-auto mr-auto" />}
+				{(!isLoading && !isLoadingPrice) && (<>
+					<div className="flex gap-2">
+						<h1 className="font-bold">{beerBalance?.toString()}x</h1>
+						<h2>Stuttgarter Hofbräu</h2>
+					</div>
+					<span>{beerPrice?.toString()} $</span>
+				</>)}
 			</CardBody>
 		</Card>
 	)
@@ -82,6 +79,7 @@ export default function EventPage() {
 						<PlusIcon className="size-4"/>
 					</CardBody>
 				</Card>
+				<WalletAddress className="self-center mt-auto"/>
 			</>)}
 		</BasicPage>
 	)
