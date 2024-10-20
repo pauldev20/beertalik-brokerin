@@ -1,21 +1,19 @@
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useRouter } from "next/navigation";
-import { useAccount } from "wagmi";
 import { useEffect } from "react";
 
 export default function useLogin(isLogin = false) {
+	const { primaryWallet } = useDynamicContext();
 	const { sdkHasLoaded } = useDynamicContext();
-	const { isConnected } = useAccount();
 	const router = useRouter();
 
 	useEffect(() => {
-		console.log("Checking login status", sdkHasLoaded, isConnected, isLogin);
-		if (sdkHasLoaded && isConnected && isLogin) {
+		if (sdkHasLoaded && primaryWallet && isLogin) {
 			router.replace("/main");
-		} else if (sdkHasLoaded && !isConnected) {
+		} else if (sdkHasLoaded && !primaryWallet && !isLogin) {
 			router.replace("/");
 		}
-	}, [sdkHasLoaded, isConnected, router]);
+	}, [sdkHasLoaded, primaryWallet, router]);
 
 	return null;
 }
