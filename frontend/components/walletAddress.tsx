@@ -8,10 +8,11 @@ import useAddressName from "@/hooks/useAddressName";
 
 interface WalletAddressProps {
 	className?: string;
+	partyAddress: string;
 }
-export default function WalletAddress({ className }: WalletAddressProps) {
+export default function WalletAddress({ className, partyAddress }: WalletAddressProps) {
 	const {isOpen, onOpen, onOpenChange} = useDisclosure();
-	const { name, refetchName } = useAddressName();
+	const { name, refetchName } = useAddressName(partyAddress);
 	const { primaryWallet } = useDynamicContext();
 
 	const shortenedAddress = primaryWallet?.address.slice(0, 6) + "..." + primaryWallet?.address.slice(-4);
@@ -22,7 +23,7 @@ export default function WalletAddress({ className }: WalletAddressProps) {
 	}
 
 	return (<>
-		<ConnectWristbandModal isOpen={isOpen} onOpenChange={onOpenChange} refresh={refetch} />
+		<ConnectWristbandModal isOpen={isOpen} onOpenChange={onOpenChange} refresh={refetch} partyAddr={partyAddress}/>
 		<Link color="primary" className={clsx(className, "cursor-pointer")} onClick={onOpen}>{name !== undefined ? name : shortenedAddress}</Link>
 	</>)
 }

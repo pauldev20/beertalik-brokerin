@@ -21,6 +21,7 @@ export default function InstallPrompt({ children }: Readonly<{ children: React.R
         setIsMobile(mobileRegex.test(navigator.userAgent) || window.innerWidth < 768);
     }, []);
 
+    return children;
     if (isStandalone) {
         return children;
     }

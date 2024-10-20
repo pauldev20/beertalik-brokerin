@@ -30,7 +30,7 @@ export default function ChartPage() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const { beerBalance, refetchBeer } = useBeerBalance(searchParams.get("beer") as `0x${string}`);
-	const { name } = useAddressName();
+	const { name } = useAddressName(searchParams.get("party") || "");
 	useLogin();
 
 	const { data: USDCBalance, refetch: refetchUSDC } = useReadContract({
@@ -133,7 +133,7 @@ export default function ChartPage() {
 	}, [data, status]);
 
 	return (<>
-		<ConnectWristbandModal isOpen={isOpen} onOpenChange={onOpenChange} />
+		<ConnectWristbandModal isOpen={isOpen} onOpenChange={onOpenChange} partyAddr={searchParams.get("party") || ""}/>
 		<BasicPage
 			topLeftBtn={<ChevronLeftIcon />}
 			topLeftClick={() => router.replace(`/event?addr=${searchParams.get("party")}`)}

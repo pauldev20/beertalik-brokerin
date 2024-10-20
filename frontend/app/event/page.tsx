@@ -26,21 +26,37 @@ interface BuyBeerModalProps {
 	partyAddr: string;
 }
 function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
+	const [loadingWristband, setLoadingWristband] = useState(false);
+	const [user, setUser] = useState<undefined | string>(undefined);
 	const [loading, setLoading] = useState(false);
 	const [value, setValue] = useState(1);
 
-	const btnClick = async () => {
+	const connWristband = async () => {
 		try {
-			setLoading(true);
+			setLoadingWristband(true);
 			const result = await execHaloCmdWeb({
 				name: "get_pkeys"
 			});
 			const address = result["etherAddresses"]["1"];
+			setUser(address);
+			setLoadingWristband(false);
+		} catch (e) {
+			console.log(e);
+			setLoadingWristband(false);
+		}
+	}
+
+	const checkout = async () => {
+		try {
+			if (user == undefined) {
+				return;
+			}
+			setLoading(true);
 			const resultBurn = await writeContract(config, {
 				abi: partyAbi,
 				address: partyAddr as `0x${string}`,
 				functionName: 'burnBeer',
-				args: [address as `0x${string}`, BigInt(value)],
+				args: [user as `0x${string}`, BigInt(value)],
 				// @ts-expect-error idk
 				chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
 			});
@@ -48,8 +64,9 @@ function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
 				hash: resultBurn,
 				confirmations: 1
 			});
-			console.log("Bought beer", resultBurn);
+			console.log("Checked out beer", resultBurn);
 			setLoading(false);
+			onOpenChange(false);
 		} catch (e) {
 			console.log(e);
 			setLoading(false);
@@ -57,7 +74,7 @@ function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
 	}
 
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} hideCloseButton isDismissable={!loading}>
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange} hideCloseButton isDismissable={!loadingWristband && !loading}>
 			<ModalContent>
 				<ModalHeader className="flex items-center justify-between">Checkout</ModalHeader>
 				<ModalBody>
@@ -72,8 +89,11 @@ function BuyBeerModal({ isOpen, onOpenChange, partyAddr }: BuyBeerModalProps) {
 							labelPlacement="inside"
 						/>
 					</div>
-					<Button color="primary" className="mb-5" isLoading={loading} onClick={btnClick}>
-						Scan Wristband
+					<Button color={user ? "success" : "secondary"} isLoading={loadingWristband} onClick={connWristband} isDisabled={user != undefined}>
+						{user ? user : "Scan Wristband"}
+					</Button>
+					<Button color="primary" className="mb-5" isLoading={loading} onClick={checkout} isDisabled={user == undefined}>
+						Checkout
 					</Button>
 				</ModalBody>
 			</ModalContent>
@@ -163,7 +183,7 @@ export default function EventPage() {
 						<PlusIcon className="size-4"/>
 					</CardBody>
 				</Card>
-				<WalletAddress className="self-center mt-auto"/>
+				<WalletAddress className="self-center mt-auto" partyAddress={searchParams.get("addr") || ""}/>
 			</>)}
 		</BasicPage>
 	</>)
