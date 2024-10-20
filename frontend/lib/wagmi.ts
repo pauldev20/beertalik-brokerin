@@ -1,4 +1,4 @@
-import { polygonAmoy, sepolia, skaleNebulaTestnet, flowTestnet, morphHolesky } from "wagmi/chains";
+import { polygonAmoy, sepolia, flowTestnet, morphHolesky, skaleCalypsoTestnet } from "wagmi/chains";
 import { http, createConfig } from "wagmi";
 
 export const config = createConfig({
@@ -7,7 +7,7 @@ export const config = createConfig({
     ssr: true,
     transports: {
         [polygonAmoy.id]: http(),
-        [skaleNebulaTestnet.id]: http(),
+        [skaleCalypsoTestnet.id]: http(),
         [flowTestnet.id]: http(),
         [morphHolesky.id]: http(),
         [sepolia.id]: http()
