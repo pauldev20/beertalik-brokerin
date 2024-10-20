@@ -1,8 +1,11 @@
 RPC_SEPOLIA="https://sepolia.drpc.org"
 POLYGON_AMOY_RPC="https://rpc-amoy.polygon.technology/"
 MORPH_HOLESKY_RPC="https://rpc-quicknode-holesky.morphl2.io/"
+FLOW_RPC="https://testnet.evm.nodes.onflow.org"
+SKALE_RPC="https://testnet.skalenodes.com/v1/giant-half-dual-testnet"
+ZIRCUIT_RPC="https://zircuit1-testnet.liquify.com"
 
-RPC=$(MORPH_HOLESKY_RPC)
+RPC=$(ZIRCUIT_RPC)
 
 include .env
 export
@@ -63,6 +66,25 @@ party-verify:
 	src/Party.sol:Party \
 	--verifier-url https://api-amoy.polygonscan.com/api/ \
 	-e $(POLYSCAN_API_KEY) \
+	--rpc-url $(RPC) \
+	--constructor-args $(CONSTRUCTOR_ARGS) \
+	--chain polygon-amoy \
+	--watch
+party-verify-morph:
+	forge verify-contract \
+	0xbA65a69d90E2f9337744dfa365EA3D7064444Fe5 \
+	src/Party.sol:Party \
+	--verifier-url https://explorer-api-holesky.morphl2.io/api \
+	--rpc-url $(RPC) \
+	--constructor-args $(CONSTRUCTOR_ARGS) \
+	--chain polygon-amoy \
+	--watch
+party-verify-zircuit:
+	forge verify-contract \
+	0xbA65a69d90E2f9337744dfa365EA3D7064444Fe5 \
+	src/Party.sol:Party \
+	--verifier-url https://explorer.testnet.zircuit.com/api/contractVerifyHardhat \
+	-e $(ZIRCUIT_API_KEY) \
 	--rpc-url $(RPC) \
 	--constructor-args $(CONSTRUCTOR_ARGS) \
 	--chain polygon-amoy \

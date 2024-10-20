@@ -20,6 +20,7 @@
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
+  { "inputs": [], "name": "NoNFT", "type": "error" },
   {
     "inputs": [
       { "internalType": "address", "name": "owner", "type": "address" }
@@ -90,6 +91,15 @@
     "name": "amountDecrease",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "nfcAddr", "type": "address" }
+    ],
+    "name": "approveNFC",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
