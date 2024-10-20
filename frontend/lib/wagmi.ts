@@ -2,7 +2,7 @@ import { polygonAmoy, sepolia, flowTestnet, morphHolesky, skaleCalypsoTestnet } 
 import { http, createConfig } from "wagmi";
 
 export const config = createConfig({
-    chains: [polygonAmoy, sepolia],
+    chains: [polygonAmoy, sepolia, skaleCalypsoTestnet, flowTestnet, morphHolesky],
     multiInjectedProviderDiscovery: false,
     ssr: true,
     transports: {
