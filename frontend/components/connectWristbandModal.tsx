@@ -1,10 +1,12 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, Input, Button } from "@nextui-org/react";
+import { DynamicUserProfile, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 // @ts-expect-error idk
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
-import { DynamicUserProfile, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { UserIcon } from "@heroicons/react/24/outline";
-import IconButton from "./iconButton";
 import { useState } from "react";
+
+import IconButton from "@/components/iconButton";
+
 import useAddressName from "@/hooks/useAddressName";
 
 interface ConnectWristbandModalProps {

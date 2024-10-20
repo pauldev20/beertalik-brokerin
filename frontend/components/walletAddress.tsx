@@ -1,8 +1,10 @@
-import ConnectWristbandModal from "@/components/connectWristbandModal";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Link, useDisclosure } from "@nextui-org/react";
-import useAddressName from "@/hooks/useAddressName";
 import clsx from "clsx";
+
+import ConnectWristbandModal from "@/components/connectWristbandModal";
+
+import useAddressName from "@/hooks/useAddressName";
 
 interface WalletAddressProps {
 	className?: string;

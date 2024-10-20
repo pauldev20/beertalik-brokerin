@@ -1,5 +1,5 @@
-import { http, createConfig } from "wagmi";
 import { polygonAmoy, sepolia } from "wagmi/chains";
+import { http, createConfig } from "wagmi";
 
 export const config = createConfig({
     chains: [polygonAmoy, sepolia],

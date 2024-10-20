@@ -1,8 +1,9 @@
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import abi from "@/contracts/partyAbi.json";
 import { polygonAmoy } from "wagmi/chains";
 import { useReadContract } from "wagmi";
 import { formatUnits } from "viem";
+
+import abi from "@/contracts/partyAbi.json";
 
 export default function useBeerPrice(partyAddr: string) {
 	const { primaryWallet } = useDynamicContext();

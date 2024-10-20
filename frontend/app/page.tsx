@@ -1,4 +1,5 @@
 import ConnectWalletButton from "@/components/connectWallet";
+
 import { siteConfig } from "@/lib/siteConfig";
 
 export default function Home() {

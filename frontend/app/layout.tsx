@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans } from "next/font/google";
+import { Spinner } from "@nextui-org/react";
+import { Suspense } from "react";
 import clsx from "clsx";
+
 import "./globals.css";
 
-import Providers from "@/lib/providers";
+import InstallPrompt from "@/components/installPrompt";
 
 import { siteConfig } from "@/lib/siteConfig";
-import InstallPrompt from "@/components/installPrompt";
-import { Suspense } from "react";
-import { Spinner } from "@nextui-org/react";
+import Providers from "@/lib/providers";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
