@@ -10,7 +10,8 @@ contract Deploy is Script {
         // vm.createSelectFork(vm.rpcUrl("sepolia"));
         vm.startBroadcast();
         address usdc = address(new USDC(msg.sender));
-        new PartyList(usdc);
+        PartyList list = new PartyList(usdc);
+        list.createParty("ethglobal-sf.beertalik.eth"); 
         vm.stopBroadcast();
     }
 }

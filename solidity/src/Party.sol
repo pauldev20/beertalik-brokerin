@@ -22,7 +22,7 @@ contract Party is Ownable {
     uint256 private lastPurchasePrice;
     uint256 private lastPurchaseBlockNumber;
 
-    mapping(address => address) nfc;
+    mapping(address => address) public nfc;
 
     event Purchase(address from, uint256 blockNumber, uint256 price);
 

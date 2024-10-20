@@ -5,7 +5,7 @@ FLOW_RPC="https://testnet.evm.nodes.onflow.org"
 SKALE_RPC="https://testnet.skalenodes.com/v1/giant-half-dual-testnet"
 ZIRCUIT_RPC="https://zircuit1-testnet.liquify.com"
 
-RPC=$(ZIRCUIT_RPC)
+RPC=$(POLYGON_AMOY_RPC)
 
 include .env
 export
@@ -37,7 +37,7 @@ partyList-deploy:
 CONSTRUCTOR_ARGS := $(shell cast abi-encode "constructor(address)" $(ADDRESS))
 usdc-verify:
 	forge verify-contract \
-	0x927fB1414F83905620F460B024bcFf2dD1dA430c \
+	0xd58F1F6Fbc7eD0266f9Db2558d8310571Ec039aa \
 	src/USDC.sol:USDC \
 	--verifier-url https://api-amoy.polygonscan.com/api/ \
 	-e $(POLYSCAN_API_KEY) \
@@ -47,7 +47,7 @@ usdc-verify:
 	--watch
 partyList-verify:
 	forge verify-contract \
-	0x34163568688fad1086b730FCa9e677aD4D585aa6 \
+	0xC3CD2B74B46E9bCc8Bf3841313263863CCFb5b22 \
 	src/PartyList.sol:PartyList \
 	--verifier-url https://api-amoy.polygonscan.com/api/ \
 	-e $(POLYSCAN_API_KEY) \
@@ -59,10 +59,10 @@ partyList-verify:
 
 partyList-create-party:
 	forge script script/PartyList.s.sol:CreateParty --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
-CONSTRUCTOR_ARGS := $(shell cast abi-encode "constructor(address,string,address,uint256,uint256,uint256,uint256)" $(ADDRESS) "ETHGlobal SF" 0x927fB1414F83905620F460B024bcFf2dD1dA430c 3000000 500000 10 500000)
+CONSTRUCTOR_ARGS := $(shell cast abi-encode "constructor(address,string,address,uint256,uint256,uint256,uint256)" $(ADDRESS) "ETHGlobal SF" 0xd58F1F6Fbc7eD0266f9Db2558d8310571Ec039aa 3000000 500000 10 500000)
 party-verify:
 	forge verify-contract \
-	0x6D2063D32EFacbb20B27cFE1F8683747201d3867 \
+	0xc3f8515c6a4D33F77D82Bf190C29d8C15a9370BD \
 	src/Party.sol:Party \
 	--verifier-url https://api-amoy.polygonscan.com/api/ \
 	-e $(POLYSCAN_API_KEY) \
@@ -92,6 +92,8 @@ party-verify-zircuit:
 
 party-buy-beer:
 	forge script script/Party.s.sol:BuyBeer --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
+party-change-owner:
+	forge script script/Party.s.sol:ChangeOwner --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi 
 party-get-price:
 	forge script script/Party.s.sol:GetPrice --broadcast --fork-url $(RPC) --private-key $(PRIVATE_KEY) -vvvv --ffi
 

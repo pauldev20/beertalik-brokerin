@@ -18,7 +18,7 @@ contract PartyList {
             usdc,
             3e6, // min price
             5e5, // buy Increase
-            10, // block Interval decrease
+            50, // block Interval decrease
             5e5 // amount decrease
         );
         parties.push(party);
