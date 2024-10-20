@@ -14,6 +14,7 @@ export default function InstallPrompt({ children }: Readonly<{ children: React.R
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
         )
+
         setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
     }, []);
     useEffect(() => {
