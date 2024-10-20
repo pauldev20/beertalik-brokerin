@@ -41,8 +41,8 @@ export default function Providers({ children }: Readonly<{ children: React.React
                             networkId: 1482601649,
                             name: "SKALE Nebula Hub",
                             iconUrls: ["https://cdn.prod.website-files.com/625c39b93541414104a1d654/66221a808e7f4596315967c6_skale-logo-white-cropped.webp"],
-                            rpcUrls: ["https://mainnet.skalenodes.com/v1/green-giddy-denebola"],
-                            blockExplorerUrls: ["https://green-giddy-denebola.explorer.mainnet.skalenodes.com/"],
+                            rpcUrls: ["https://testnet.skalenodes.com/v1/giant-half-dual-testnet"],
+                            blockExplorerUrls: ["https://giant-half-dual-testnet.explorer.testnet.skalenodes.com"],
                             nativeCurrency: {
                                 name: "sFUEL",
                                 symbol: "sFUEL",
