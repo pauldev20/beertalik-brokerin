@@ -32,16 +32,20 @@ export default function InstallPrompt({ children }: Readonly<{ children: React.R
                 This site is intended for mobile devices only. Please visit us on a mobile device for the best experience.
             </p>)}
 
-            {(!isIOS && isMobile) && (
+            {(isIOS && isMobile) && (
                 <Button>Add to Home Screen</Button>
             )}
 
-            {(isIOS && isMobile) && (
-                <p className="flex items-center">
-                    To install this app on your iOS device, tap the share button
-                    <ArrowUpOnSquareIcon className="size-5 mx-1" />
-                    {"and then \"Add to Home Screen\""}
-                    <PlusIcon className="size-5 mx-1" />
+            {(!isIOS && isMobile) && (
+                <p className="flex flex-col items-center justify-center text-center gap-2">
+                    <span className="flex items-center">
+                        To install this app on your iOS device, tap the share button
+                        <ArrowUpOnSquareIcon className="size-5 mx-1" />
+                    </span>
+                    <span className="flex items-center">
+                        {"and then \"Add to Home Screen\""}
+                        <PlusIcon className="size-5 mx-1" />
+                    </span>
                 </p>
             )}
         </div>

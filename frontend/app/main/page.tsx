@@ -112,7 +112,7 @@ export default function MainPage() {
 			{loading && <div className="flex flex-grow items-center justify-center gap-3">
 				<Spinner size="lg" />
 			</div>}
-			{!loading && <div className="flex flex-col gap-1.5 flex-grow overflow-y-auto scrollbar-hide">
+			{!loading && <div className="flex flex-col gap-1.5 flex-grow">
 				{results.length > 0 ? (
 					results.map((event, index) => (
 						<Event
