@@ -1,61 +1,89 @@
 "use client";
 
-import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Spinner, useDisclosure } from "@nextui-org/react";
+import { Button, Card, CardBody, Spinner, useDisclosure } from "@nextui-org/react";
+import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from '@tanstack/react-query';
-import BasicPage from "@/components/basicPage";
 import { gql, request } from 'graphql-request';
+import { erc20Abi, formatUnits } from "viem";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Chart } from "react-google-charts";
-// @ts-expect-error idk
-import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
+import { useReadContract } from "wagmi";
 
-interface ConnectWristbandModalProps {
-	isOpen: boolean;
-	onOpenChange: (isOpen: boolean) => void;
-}
-function ConnectWristbandModal({ isOpen, onOpenChange}: ConnectWristbandModalProps) {
+import ConnectWristbandModal from "@/components/connectWristbandModal";
+import BasicPage from "@/components/basicPage";
+
+import useBeerBalance from "@/hooks/useBeerBalance";
+import useAddressName from "@/hooks/useAddressName";
+import useLogin from "@/hooks/useLogin";
+
+import partyAbi from "@/contracts/partyAbi.json";
+import { config } from "@/lib/wagmi";
+
+export default function ChartPage() {
+	const {isOpen, onOpen, onOpenChange} = useDisclosure();
+	const [chartData, setChartData] = useState([]);
+	const { primaryWallet } = useDynamicContext();
 	const [loading, setLoading] = useState(false);
+	const searchParams = useSearchParams();
+	const router = useRouter();
+	const { beerBalance, refetchBeer } = useBeerBalance(searchParams.get("beer") as `0x${string}`);
+	const { name } = useAddressName();
+	useLogin();
 
-	async function btnClick() {
-		setLoading(true);
+	const { data: USDCBalance, refetch: refetchUSDC } = useReadContract({
+		abi: erc20Abi,
+		address: searchParams.get("usdc") as `0x${string}`,
+		functionName: 'balanceOf',
+		args: [primaryWallet?.address as `0x${string}`],
+		// @ts-expect-error idk
+		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
+	});
+
+	async function buyBeer() {
 		try {
-			console.log(await execHaloCmdWeb({
-			  name: "sign",
-			  keyNo: 1,
-			  message: "010203"
-			}));
+			if (name === undefined) {
+				onOpen();
+				return;
+			}
+			setLoading(true);
+			const resultAllow = await writeContract(config, {
+				abi: erc20Abi,
+				address: searchParams.get("usdc") as `0x${string}`,
+				functionName: 'approve',
+				args: [
+					searchParams.get("party") as `0x${string}`,
+					BigInt(10000000)
+				],
+				// @ts-expect-error idk
+				chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
+			});
+			await waitForTransactionReceipt(config, {
+				hash: resultAllow,
+				confirmations: 1
+			});
+			const resultBuy = await writeContract(config, {
+				abi: partyAbi,
+				address: searchParams.get("party") as `0x${string}`,
+				functionName: 'buy',
+				// @ts-expect-error idk
+				chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
+			});
+			await waitForTransactionReceipt(config, {
+				hash: resultBuy,
+				confirmations: 1
+			});
+			await refetchBeer();
+			await refetchChart();
+			await refetchUSDC();
 			setLoading(false);
 		} catch (e) {
 			console.log(e);
+			setLoading(false);
 		}
 	}
-
-	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} hideCloseButton isDismissable={!loading}>
-			<ModalContent>
-				<ModalHeader>Set Name & Wristband</ModalHeader>
-				<ModalBody>
-					<Input type="text" label="Username" />
-					<Button color="primary" className="mb-5" isLoading={loading} onClick={btnClick}>
-						Connect Wristband
-					</Button>
-				</ModalBody>
-			</ModalContent>
-		</Modal>
-	)
-}
-
-export default function BeerPage() {
-	const {isOpen, onOpen, onOpenChange} = useDisclosure();
-	const [chartData, setChartData] = useState([]);
-	const router = useRouter();
-
-	// const result = useEnsName({
-	// 	address: '0x0000000000000000000000000000000000001337',
-	// 	chainId: sepolia.id
-	// });
 
 	// @ts-expect-error idk
 	function convertToChartData(data) {
@@ -86,15 +114,15 @@ export default function BeerPage() {
 		return calculateMedian(allNumbers);
 	};
 	const query = gql`{
-		purchases(first: 10, orderBy: blockNumber) {
+		purchases(first: 1000, orderBy: blockNumber, orderDirection: asc) {
 		  price
 		  blockNumber
 		}
 	}`;
-	const { data, status } = useQuery({
+	const { data, status, refetch: refetchChart } = useQuery({
 		queryKey: ['data'],
 		async queryFn() {
-		  return await request('https://api.studio.thegraph.com/query/92107/beertik/version/latest', query)
+		  return await request(process.env.NEXT_PUBLIC_GRAPH_URL || "", query)
 		}
 	});
 	useEffect(() => {
@@ -108,18 +136,19 @@ export default function BeerPage() {
 		<ConnectWristbandModal isOpen={isOpen} onOpenChange={onOpenChange} />
 		<BasicPage
 			topLeftBtn={<ChevronLeftIcon />}
-			topLeftClick={() => router.replace("/event")}
+			topLeftClick={() => router.replace(`/event?addr=${searchParams.get("party")}`)}
 		>
-			{chartData.length === 0 && <div className="flex flex-grow items-center justify-center gap-3">
+			{(chartData.length === 0 || USDCBalance === undefined) && <div className="flex flex-grow items-center justify-center gap-3">
 				<Spinner size="lg" />
 			</div>}
-			{chartData.length > 0 && (<>
+			{(chartData.length > 0 && USDCBalance !== undefined) && (<>
 				<h1 className="text-2xl font-bold text-center">Stuttgarter Hofbräu</h1>
-				<h2 className="text-lg text-center opacity-75">Your Current Amount: 0</h2>
-				<Chart 
+				<h2 className="text-lg text-center opacity-75">Your Current Amount: {beerBalance?.toString()}</h2>
+				<Chart
 					chartType="CandlestickChart"
 					width="100%"
 					height="400px"
+					loader={<Spinner size="lg" />}
 					data={chartData}
 					options={{
 						legend: "none",
@@ -155,13 +184,20 @@ export default function BeerPage() {
 						},
 					}}
 				/>
-				<div className="mt-auto flex justify-between gap-3">
-					<Button color="success" className="flex-grow" onClick={onOpen}>
-						Buy
-					</Button>
-					<Button color="danger" className="flex-grow">
-						Sell
-					</Button>
+				<div className="mt-auto flex- flex-col gap-2">
+					<Card className="my-3">
+						<CardBody>
+							<h2 className="text-xl font-bold">Your USDC: {formatUnits(USDCBalance || BigInt(0), 6).toString()}$</h2>
+						</CardBody>
+					</Card>
+					<div className="flex justify-between gap-3">
+						<Button color="success" className="flex-grow" onClick={buyBeer} isLoading={loading}>
+							Buy
+						</Button>
+						<Button color="danger" className="flex-grow" isDisabled>
+							Sell
+						</Button>
+					</div>
 				</div>
 			</>)}
 		</BasicPage>

@@ -1,12 +1,17 @@
 "use client";
 
 import { ArrowLeftStartOnRectangleIcon, ChevronRightIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { useRouter } from 'next/navigation';
-
 import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Spinner, useDisclosure } from "@nextui-org/react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+import { useReadContract } from "wagmi";
+
 import BasicPage from "@/components/basicPage";
+
+import useLogin from "@/hooks/useLogin";
+
+import partyListAbi from "@/contracts/partyListAbi.json";
 
 interface CreateEventModalProps {
 	isOpen: boolean;
@@ -39,52 +44,56 @@ function CreateEventModal({ isOpen, onOpenChange}: CreateEventModalProps) {
 
 interface EventProps {
 	name: string;
-	location: string;
+	addr: string;
 }
-function Event({ name, location }: EventProps) {
+function Event({ name, addr }: EventProps) {
 	const router = useRouter();
 
 	return (
-		<div className="flex w-full justify-between items-center active:opacity-50 transition-opacity duration-100" onClick={() => router.push("/event")}>
+		<div className="flex w-full justify-between items-center active:opacity-50 transition-opacity duration-100" onClick={() => router.replace(`/event?addr=${addr}`)}>
 			<div className="flex flex-col">
 				<h2 className="text-lg font-bold">{name}</h2>
-				<h3 className="text-sm opacity-75">{location}</h3>
+				<h3 className="text-sm opacity-75">{addr}</h3>
 			</div>
 			<ChevronRightIcon className="size-8"/>
 		</div>
 	)
 }
 
-export default function Main() {
+export default function MainPage() {
 	const {isOpen, onOpen, onOpenChange} = useDisclosure();
 	const [results, setResults] = useState<EventProps[]>([]);
 	const [events, setEvents] = useState<EventProps[]>([]);
 	const [loading, setLoading] = useState(true);
 	const { handleLogOut } = useDynamicContext();
 	const router = useRouter();
+	useLogin();
+
+	const { data: partys } = useReadContract({
+		abi: partyListAbi,
+		address: process.env.NEXT_PUBLIC_PARTY_LIST_CONTRACT_ADDRESS as `0x${string}`,
+		functionName: 'getPartyNames',
+		// @ts-expect-error idk
+		chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "")
+	});
+	useEffect(() => {
+		if (partys === undefined) return;
+		setEvents(partys as EventProps[]);
+		setResults(partys as EventProps[]);
+		setLoading(false);
+	}, [partys]);
 
 	const logout = async () => {
 		handleLogOut();
 		router.replace("/");
 	}
 
-	useEffect(() => {
-		setLoading(true);
-		const res = [...Array(30)].map((_, index) => ({
-			name: `Event Name ${index}`,
-			location: "Event Location",
-		}));
-		setEvents(res);
-		setResults(res);
-		setLoading(false);
-	}, []);
-
 	// @ts-expect-error idk
 	const handleSearch = (event) => {
 		const searchTerm = event.target.value.toLowerCase();
 		const filteredResults = events.filter(event =>
 			event.name.toLowerCase().includes(searchTerm) || 
-			event.location.toLowerCase().includes(searchTerm)
+			event.addr.toLowerCase().includes(searchTerm)
 		);
 		setResults(filteredResults);
 	};
@@ -98,22 +107,17 @@ export default function Main() {
 			topLeftClick={logout}
 			topRightBtn={<PlusIcon/>}
 			topRightClick={onOpen}
-			navbarItems={[
-				{ icon: "HomeIcon", label: "Home", active: true },
-				{ icon: "UserIcon", label: "Profile", onClick: () => router.replace("/profile") },
-			]}
 		>
 			<Input isClearable type="text" placeholder="Search" startContent={<MagnifyingGlassIcon className="size-4" />} onChange={handleSearch} />
 			{loading && <div className="flex flex-grow items-center justify-center gap-3">
 				<Spinner size="lg" />
 			</div>}
-			{!loading && <div className="flex flex-col gap-1.5 flex-grow overflow-y-auto scrollbar-hide">
+			{!loading && <div className="flex flex-col gap-1.5 flex-grow">
 				{results.length > 0 ? (
 					results.map((event, index) => (
 						<Event
 							key={index}
-							name={event.name}
-							location={event.location}
+							{...event}
 						/>
 					))
 				) : (

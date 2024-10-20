@@ -1,11 +1,15 @@
+import { polygonAmoy, sepolia, skaleNebulaTestnet, flowTestnet, morphHolesky } from "wagmi/chains";
 import { http, createConfig } from "wagmi";
-import { sepolia } from "wagmi/chains";
 
 export const config = createConfig({
-    chains: [sepolia],
+    chains: [polygonAmoy, sepolia],
     multiInjectedProviderDiscovery: false,
     ssr: true,
     transports: {
+        [polygonAmoy.id]: http(),
+        [skaleNebulaTestnet.id]: http(),
+        [flowTestnet.id]: http(),
+        [morphHolesky.id]: http(),
         [sepolia.id]: http()
     },
 });

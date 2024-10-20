@@ -1,5 +1,5 @@
-import clsx from "clsx";
 import DynamicHeroIcon, { IconName } from "./dynamicHeroIcon";
+import clsx from "clsx";
 
 export interface BottomNavbarItemProps {
 	icon: IconName;
