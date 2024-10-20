@@ -65,7 +65,7 @@ USDC_ABI = [
 usdc_poly_contract = web3_polygon_amoy.eth.contract(address=POLY_USDC_ADDRESS, abi=USDC_ABI)
 usdc_skale_contract = web3_skale.eth.contract(address=SKALE_USDC_ADDRESS, abi=USDC_ABI)
 
-@app.route("/register", methods=["POST"])
+@app.route("/register", methods=["POST", "GET"])
 def run_register():
     name = request.args.get("name") or request.form.get("name")
     address = request.args.get("address") or request.form.get("address")
@@ -91,7 +91,7 @@ def run_register():
     return {"status": "ok", "tx": "0x" + tx_hash.hex()}, 200
 
 
-@app.route("/fund-poly", methods=["POST"])
+@app.route("/fund-poly", methods=["POST", "GET"])
 def run_fund_poly():
     address = request.args.get("address") or request.form.get("address")
 
@@ -135,7 +135,7 @@ def run_fund_poly():
     return {"status": "ok", "tx1": "0x" + tx_hash.hex(), "tx2": "0x" + tx_hash2.hex()}, 200
 
 
-@app.route("/fund-skale", methods=["POST"])
+@app.route("/fund-skale", methods=["POST", "GET"])
 def run_fund_skale():
     address = request.args.get("address") or request.form.get("address")
 
